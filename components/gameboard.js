@@ -44,5 +44,18 @@ export default class Gameboard {
     }
   }
 
+  placeShip(xCoord, yCoord, direction) {
+    if(direction === "horizontal") {
+
+    }
+    if(direction === "vertical") {
+
+    }
+  }
+
+  removeShip(shipNumber) {
+
+  }
+
 
 }
