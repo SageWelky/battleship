@@ -59,3 +59,17 @@ export default class Gameboard {
 
 
 }
+
+
+//blank board for me
+//blank board for my opponent
+//place my ships
+//they place theirs
+//I guess where a ship is on their board
+//they check their board to see if my guess hit anything
+//They update their board with my guesses' results, and tell me the updated info
+//I update my guesses' results on my board
+//they guess where a ship is on my board
+//I check to see see if their guess hit anything
+//I update my board with their guesses results, and share the updated info
+//they update their guesses' results on their board
