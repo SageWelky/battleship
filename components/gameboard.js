@@ -46,7 +46,7 @@ export default class Gameboard {
     }
   }
 
-  placeShip(xCoord, yCoord, direction) {
+  placeShip(xCoord, yCoord, length, direction) {
     if(direction === "horizontal") {
 
     }
