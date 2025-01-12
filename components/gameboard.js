@@ -1,9 +1,5 @@
 import Ship from "./ship.js";
 
-//0 for nothing there
-//-1 for a miss already guessed, and -2 for a hit already guessed
-//1-10 for the corresponding unhit ship
-
 export default class Gameboard {
 
   constructor() {
