@@ -12,12 +12,12 @@ export class Gamelogic {
     innerFunction() {
       //create players, boards, and ships in this function
       //should return a callback that starts a first turn\
-      return this.newTurn;
+      return this.turnInput;
     }
     createGameActors = innerFunction;
   }
 
-  newTurn() {
+  turnInput() {
     //...
   }
 

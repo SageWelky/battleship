@@ -3,6 +3,7 @@ export default class Ship {
     this.id = id;
     this.length = length;
     this.hit = 0;
+    this.coordinates = [];
   }
 
   isHit() {
