@@ -1,7 +1,44 @@
 
 
 
+//This is the core of the game's flow control
+//Using callbacks to enable communication between parts is, as far
+//as I'm aware, not a very common practice
+//So I thought I might note it down during TDD, and explain why I
+//elected to do it this way
 
+
+//I disliked the idea of gamelogic (or any other outer-layer code block) being
+//tightly coupled to these neat code blocks in order to direct the game
+//Additionally, I disliked the idea of having to make the outer-layer around class
+//instances overly complicated
+//Thus, I found the idea of each 'blackbox' class instance having their coupling concentrated
+//in the return makes it exceedingly easy to change out and/or isolate
+//The only external information a componenent has aside from their input is the callback
+//they're supposed to wrap their data in
+//I prefer this over the outer layer simply taking data and calling what should go next
+//because the component itself should 'know' that based on it's internal state
+//and having to keep the wrapping layer appraised of that information got a smidge messy
+//by comparison
+//The gamelogic block does most of the things you would expect a outer layer to do
+//but is kept pretty clean and simple
+
+//The core concept of the communication is:
+//callback(with data) as state -into-> gamelogic
+//gamelogic decides what component should be acting next
+//callback(with data) as "control flow mechanism" <-out of- gamelogic
+//Where all returns at the scope just below global have a callback() that acts as
+//a 'To: address' postage label of sorts
+
+//If an extra callback is nested in, it acts as a method of updating more than one component
+//related to the game's overall current state
+
+//All of these communications are fairly easy to direct, and only need a go-between
+//like gamelogic because of the need to keep track of when the turn should change between players
+//Because it is the go-between, and already is responsible for keeping track of overall game state
+//and directing it, it also acts as a convenient place to check for game end as well as housing
+//the 'create fresh class instances' code for restarts and follow-up games if such features should
+//end up being implemented
 
 //Gamelogic needs to:
 
@@ -64,20 +101,43 @@
 
 //Where:
 
-class Player {
+/*class Player {
+  //As a human input, turn commands will update the DOM off of the
+  //current gameboard state relevant to this player
+  //The DOM itself will be hooked up to event listeners which
+  //will deliver the callback with the guess information
+  //CPU players will instead have the gamecheck simply act as input for
+  //making a guess that can be delivered directly as a callback
 
+
+  constructor(id) {
+    this.id = id;
+    gameState = 0;
+  }
   //...
   startNewTurn(callback) {
+
+    //will let the other player/cpu know that they've finished placement phase
     callback();
-    if(gameState)
+    if(gameState > 0) {
+      //logic for guesses
+      //DOM update
+      //unlock input for this player
+    } else if(gameState === 0) {
+      //logic for placement
+      //DOM update
+      //unlock input for this player
+    }
+
   }
 
   leavePlacementPhase() {
 
     this.gameState++
 
-
-}
+  }
 }
 //(B):
 //Create Gameboards
+
+*/
