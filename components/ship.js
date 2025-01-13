@@ -1,9 +1,10 @@
 export default class Ship {
-  constructor(id, length) {
+  constructor(id, x, y, length, orientation) {
     this.id = id;
     this.length = length;
     this.hit = 0;
-    this.coordinates = [];
+    this.coordinates = [x, y];
+    this.orientation = orientation;
   }
 
   isHit() {

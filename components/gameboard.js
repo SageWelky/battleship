@@ -2,72 +2,99 @@ import Ship from "./ship.js";
 
 export default class Gameboard {
 
-  constructor() {
+  constructor(playerTag, type = "human") {
 
-    this.spaces = [];
+    this.hashedShipCoords = new Map();
     this.numShipsSunk = 0;
-    this.startBoard();
-
-    startBoard()
-    {
-      for(var i=0;i<=9;i++) {
-
-        this.spaces[i]=[];
-
-        for(var j=0;j<=9;j++) {
-
-          this.spaces[i].push(0);
-
-        }
-      }
-    }
-
+    this.ships = [];
+    this.currentShipID = 1;
+    this.type = type;
+    this.thisPlayer = Players[playerTag];
+    this.opponentPlayer = playerTag === 0 ? Players[1] : Players[0];
 
   }
 
   receiveAttack(xCoord, yCoord) {
 
-    let check = this.space[xCoord][yCoord];
+    const x = xCoord;
+    const y = yCoord;
 
-    if(check === 0) {
-      this.space[xCoord][yCoord] = -1;
-      return ["Miss", check];
-    } else if(check < 0) {
-      return ["Already guessed", check];
-    } else if(check > 0 && check <11) {
-      this.space[xCoord][yCoord] = -2;
-      return ["Hit", check];
+    const key = `${x},${y}`;
+
+    if(map.get(key)) {
+
+      handleHit(id, key);
+
+      //DOM update
+      //set same player startNewTurn
+
     } else {
-      return ["Error", check];
+
+      //miss logic
+
+      //DOM update
+      //set opponent player startNewTurn
+    }
+    //return callback of player to target
+  }
+
+  handleHit(id, key) {
+
+    let id = map.get(key);
+    ships[id - 1].isHit();
+
+    if(ships[id - 1].isSunk()) {
+
+      this.numShipsSunk++;
+
+      if(this.numShipsSunk > 4) {
+        //GAME OVER logic here
+      }
     }
   }
 
-  placeShip(xCoord, yCoord, length, direction) {
-    if(direction === "horizontal") {
+  placeShip(xCoord, yCoord, length, orientation) {
 
-    }
-    if(direction === "vertical") {
+    id = this.currentShipID;
+    let ship`${id}` = new Ship(id, ...arguments);
 
+
+    let coords = getShipCoordinates(...arguments);
+
+    forEach(let coord of coords) {
+
+      let x = coord[0];
+      let y = coord[1];
+      let key = `${x},${y}`;
+      map.set(key, id);
     }
+
+    this.ships.push(ship`${id}`);
+    this.currentShipID++;
+
   }
 
-  removeShip(shipNumber) {
+  getShipCoordinates(x, y, length, orientation) {
+
+    let coordinates = [];
+
+    if (orientation === 'horizontal') {
+
+      for (let i = 0; i < length; i++) {
+        coordinates.push([x + i, y]);
+      }
+
+    } else if (orientation === 'vertical') {
+
+      for (let i = 0; i < length; i++) {
+        coordinates.push([x, y + i]);
+      }
+
+    }
+
+    return coordinates;
 
   }
 
 
 }
-
-
-//blank board for me
-//blank board for my opponent
-//place my ships
-//they place theirs
-//I guess where a ship is on their board
-//they check their board to see if my guess hit anything
-//They update their board with my guesses' results, and tell me the updated info
-//I update my guesses' results on my board
-//they guess where a ship is on my board
-//I check to see see if their guess hit anything
-//I update my board with their guesses results, and share the updated info
-//they update their guesses' results on their board
