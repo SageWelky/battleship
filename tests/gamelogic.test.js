@@ -101,7 +101,7 @@
 
 //Where:
 
-/*class Player {
+class Player {
   //As a human input, turn commands will update the DOM off of the
   //current gameboard state relevant to this player
   //The DOM itself will be hooked up to event listeners which
@@ -139,5 +139,3 @@
 }
 //(B):
 //Create Gameboards
-
-*/
