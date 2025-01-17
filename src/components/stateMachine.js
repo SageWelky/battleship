@@ -25,7 +25,7 @@ export default class StateMachine {
     this.observers = [];
   }
 
-  transition(action, payload) {
+  transition(event, payload) {
 
     this.enqueue(() => {
 
