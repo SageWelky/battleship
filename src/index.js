@@ -1,5 +1,5 @@
 import "./styles.css";
-import "../components/ship.js";
+import "./components/ship.js";
 import { createGameActors, Gamelogic } from "../components/gamelogic";
 
 //create the conductor for game information between game actor objects
