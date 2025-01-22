@@ -1,3 +1,4 @@
+//stateMachine.js
 export default class StateMachine {
   /**
    * Found in gameStates.js, this is where our "state traversals" are mapped out.
@@ -5,8 +6,8 @@ export default class StateMachine {
    */
   constructor(states) {
 
-    //Startup will hookup UI and read in state object, which chains to player input
-    this.currentState = "setupPhasePlayerOne";
+    //Startup will read in state object, we want to initialize to setup.
+    this.currentState = "setupPhase";
     this.states = states;
 
     //The player input will need to be locked when it isn't their turn
@@ -38,22 +39,14 @@ export default class StateMachine {
 
     this.enqueue(() => {
 
-      const nextState = this.states[this.state].transitions[event];
-      this.state = nextState;
+      const nextState = this.states[this.currentState].transitions[event];
+      this.currentState = nextState;
 
       if (this.states[nextState]?.action) {
 
         this.states[nextState].action({...payload, stateMachineInstance: this});
       }
     });
-    //Old Version to pull from for adding onEnter/onExit functionality if needed:
-    // let state = this.states[this.currentState];
-    // let nextState = state.transition[action];
-    // this.currentState = nextState;
-    // let runOnEnter = this.states[nextState]?.onEnter;
-    // if(runOnEnter) {
-    //   runOnEnter(this.context, payload);
-    // }
   }
 
   enqueue(action) {
