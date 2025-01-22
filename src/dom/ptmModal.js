@@ -11,8 +11,8 @@ export function openPtmModal() {
     let ptmPlayerTwoContainer = document.querySelector( "#ptm-player-two-container" );
 
     //Defaults to singleplayer.
-    let leftPlayer = true;
-    let rightPlayer = false;
+    let leftPlayer = false;
+    let rightPlayer = true;
 
     function retreivePlayerTypes(leftPlayer, rightPlayer) {
       leftPlayer = ptmPlayerOneContainer.dataset.is-cpu === "true";
