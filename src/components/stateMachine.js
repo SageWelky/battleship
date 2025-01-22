@@ -1,9 +1,12 @@
 export default class StateMachine {
-
+  /**
+   * Found in gameStates.js, this is where our "state traversals" are mapped out.
+   * @param {Object} states - The states object defining transitions and logic.
+   */
   constructor(states) {
 
     //Startup will hookup UI and read in state object, which chains to player input
-    this.currentState = "setupPhase";
+    this.currentState = "setupPhasePlayerOne";
     this.states = states;
 
     //The player input will need to be locked when it isn't their turn
@@ -25,6 +28,12 @@ export default class StateMachine {
     this.observers = [];
   }
 
+  /**
+   * Transitions to a new state.
+   * @param {string} event - The name of the state to transition to.
+   * @param {Object} [payload={}] - Additional data to pass during the transition.
+   * @returns {void}
+   */
   transition(event, payload) {
 
     this.enqueue(() => {
@@ -34,10 +43,9 @@ export default class StateMachine {
 
       if (this.states[nextState]?.action) {
 
-        this.states[nextState].action(payload);
+        this.states[nextState].action({...payload, stateMachineInstance: this});
       }
     });
-
     //Old Version to pull from for adding onEnter/onExit functionality if needed:
     // let state = this.states[this.currentState];
     // let nextState = state.transition[action];
@@ -104,11 +112,3 @@ export default class StateMachine {
   }
 
 }
-
-
-
-
-
-
-
-//workspace:
