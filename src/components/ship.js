@@ -1,18 +1,18 @@
 export default class Ship {
-  constructor(id, x, y, length, orientation) {
+  constructor({id, x, y, length, orientation}) {
     this.id = id;
     this.length = length;
-    this.hit = 0;
+    this.damage = 0;
     this.coordinates = [x, y];
     this.orientation = orientation;
   }
 
-  isHit() {
-    this.hit++;
+  hit() {
+    this.damage++;
   }
 
   isSunk() {
-    if(this.hit >= this.length) {
+    if(this.damage >= this.length) {
       this.sunk = true;
       return true;
     }

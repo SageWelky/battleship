@@ -58,6 +58,15 @@ export default let gameStates = {
       else if(move && move.result === "All ships sunk") {
         stateMachineInstance.transition("gameOver", { winner: player, opponent: opponent });
       }
+
+      else if((move && move.result === "Validation Error, already guessed") || (move && move.result === "Unexpected error validating guess")) {
+
+        //If we're this is the type of error we're getting, we should try the turn again.
+        stateMachineInstance.taskQueue.unshift(stateMachineInstance.states[stateMachineInstance.currentState].action({player: player, opponent: opponent, stateMachineInstance: stateMachineInstance}));
+      }
+      else {
+        prompt("A game-breaking error has occured, please refresh the Page.");
+      }
     },
     transitions: { newTurn: "newTurn", gameOver: "gameOver" },
   },
@@ -69,6 +78,9 @@ export default let gameStates = {
         * @param {StateMachine} params.stateMachineInstance - Reference to our state machine instance for which gameStates is the corresponding "states" property.
         */
     action: ({ winner, opponent, stateMachineInstance }) => {
+
+      //Remaining tasks currently in queue are superfluous, and could only cause issues.
+      stateMachineInstance.taskQueue = [];
 
       //Call DOM loading for the victory screen.
     },
@@ -83,8 +95,10 @@ export default let gameStates = {
         */
     action: async ({ player, opponent, stateMachineInstance }) => {
 
-      let nextGameType = await nextGameInput();
+      //A new match requires default state.
+      stateMachineInstance.resetState();
 
+      let nextGameType = await nextGameInput();
       if(nextGameType === "rematch"){
         player.resetState()
         opponent.resetState()
@@ -95,6 +109,8 @@ export default let gameStates = {
         player = players.playerOne;
         opponent = players.playerTwo;
       }
+
+      createPlaySpace({playerOneType: player.isCPU, playerTwoType: opponent.isCPU});
       stateMachineInstance.transition("setupPhase", {player: player, opponent: opponent});
     },
     transitions: { setupPhase: "setupPhase" },

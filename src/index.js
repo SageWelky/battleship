@@ -21,7 +21,7 @@ async function startupTheApplication() {
   opponent = players.playerTwo;
 
   //Initializes the play screen.
-  createPlaySpace();
+  createPlaySpace({playerOneType: player.isCPU, playerTwoType: opponent.isCPU});
 
   //Start the action of the initial state.
   battleshipStateMachine.states[battleshipStateMachine.currentState].action({ player: player, opponent: opponent, stateMachineInstance: battleshipStateMachine});
@@ -30,6 +30,6 @@ async function startupTheApplication() {
 
 let startButton = document.querySelector( "#start-button");
 
-startButton.addEventListener("click", startupTheApplication());
+startButton.addEventListener("click", startupTheApplication);
 
 

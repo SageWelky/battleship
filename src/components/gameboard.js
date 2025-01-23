@@ -2,62 +2,56 @@ import Ship from "./ship.js";
 
 export default class Gameboard {
 
-  constructor(playerTag, type = "human") {
+  constructor() {
 
     this.hashedShipCoords = new Map();
+    this.hashedGuesses = new Map();
     this.numShipsSunk = 0;
     this.ships = [];
     this.currentShipID = 1;
-    this.type = type;
-    this.thisPlayer = Players[playerTag];
-    this.opponentPlayer = playerTag === 0 ? Players[1] : Players[0];
 
   }
 
-  receiveAttack(xCoord, yCoord) {
-
-    const x = xCoord;
-    const y = yCoord;
+  receiveAttack({x: x, y: y}) {
 
     const key = `${x},${y}`;
 
-    if(hashedShipCoords.get(key)) {
+    if(this.hashedGuesses.get(key) === undefined) {
 
-      //State reset.
-      //Though cheaper to do upon new game,
-      //easier to understand and prevent bugs with if done here
-      let gameOver = false;
-      //Side effect is main point,
-      //but gameOver is an appropriate check here
-      let gameOver = handleHit(key);
+      this.hashedGuesses.set(key, 1);
 
-      //****DOM Update****
-      //DOM helper function call
-      //e.g.:
-      //insertDomNode(key, gameOver, <what function to call, such as hit logic>);
-      //
+      if(this.hashedShipCoords.get(key) !== undefined) {
 
-      if(!gameOver) {
-        //set same player startNewTurn
+
+        let gameOver = false;
+        //Side effect updates ship damage from hit, return checks if all sunk.
+
+        gameOver = this.handleHit(key);
+
+        //DOM update
+        if(gameOver && typeof gameOver === "boolean") {
+          return "All ships sunk";
+        }
+        return "hit";
       }
 
+      else {
+        //DOM update
+        return "miss";
+      }
+    } else if(this.hashedGuesses.get(key) === 1) {
 
-    } else {
-
-      //miss logic
-
-      //DOM update
-      //set opponent player startNewTurn
+      return "Validation Error, already guessed";
     }
-    //return callback of player to target
+    return "Unexpected error validating guess"
   }
 
   handleHit(key) {
 
-    let id = hashedShipCoords.get(key);
-    ships[id - 1].isHit();
+    let id = this.hashedShipCoords.get(key);
+    this.ships[id - 1].hit();
 
-    if(ships[id - 1].isSunk()) {
+    if(this.ships[id - 1].isSunk()) {
 
       this.numShipsSunk++;
 
@@ -68,48 +62,43 @@ export default class Gameboard {
     return false;
   }
 
-  placeShip(xCoord, yCoord, length, orientation) {
+  placeShip({x: x, y: y, length: length, orientation: orientation}) {
 
-    id = this.currentShipID;
-    let ship`${id}` = new Ship(id, ...arguments);
+    let id = this.currentShipID;
+    let newShip = new Ship({id: id, x: x, y: y, length: length, orientation: orientation});
 
+    let coords = this.getShipCoordinates({x: x, y: y, length: length, orientation: orientation});
 
-    let coords = getShipCoordinates(...arguments);
+    coords.forEach((coord) => {
+      let xCoord = coord[0];
+      let yCoord = coord[1];
+      let key = `${xCoord},${yCoord}`;
+      this.hashedShipCoords.set(key, id);
+    });
 
-    forEach(let coord of coords) {
-
-      let x = coord[0];
-      let y = coord[1];
-      let key = `${x},${y}`;
-      map.set(key, id);
-    }
-
-    this.ships.push(ship`${id}`);
+    this.ships.push(newShip);
     this.currentShipID++;
-
+    return id;
   }
 
-  getShipCoordinates(x, y, length, orientation) {
+  getShipCoordinates({x: x, y: y, length: length, orientation: orientation}) {
 
     let coordinates = [];
 
-    if (orientation === 'horizontal') {
+    if (orientation === "horizontal") {
 
       for (let i = 0; i < length; i++) {
         coordinates.push([x + i, y]);
       }
 
-    } else if (orientation === 'vertical') {
+    } else if (orientation === "vertical") {
 
       for (let i = 0; i < length; i++) {
         coordinates.push([x, y + i]);
       }
 
     }
-
     return coordinates;
-
   }
-
 
 }

@@ -9,22 +9,13 @@ export default class StateMachine {
     //Startup will read in state object, we want to initialize to setup.
     this.currentState = "setupPhase";
     this.states = states;
-
-    //The player input will need to be locked when it isn't their turn
-    //We can account for two players in a later refactor
-    this.playerTurnLocked = false;
-
-    //The queue allows for a clean call-stack, and instruction to multiple actors per state transition
+    //The queue allows for a clean call-stack.
     this.taskQueue = [];
     this.running = false;
-
-    //We're binding the 'this' context in order to preserve instance reference
+    //We're binding the 'this' context in order to preserve instance reference.
     this.runQueue = this.runQueue.bind(this);
-
-    //pausing the queue without changing the running status allows specialized queue stops
-    //for player input without needing async code
+    //Allows for player input without needing async code.
     this.paused = false;
-
     //implement fully in a future iteration of refactoring, DOM oriented
     this.observers = [];
   }
@@ -60,15 +51,15 @@ export default class StateMachine {
 
   runQueue() {
 
+    //This interupts running the queue until human input can 'resolve'.
     if(this.paused) {
       return;
     }
 
-    //State transitions can result from actions, which can themselves add tasks
-    //The task insertion needs to know if it should start the queue execution context
+    //The task insertion needs to know if it should 'open' the queue execution context.
     this.running = true;
 
-    while(this.taskQueue.length > 0) {
+    while(this.paused === false && this.taskQueue.length > 0) {
       let action = this.taskQueue.shift();
       action();
     }
@@ -102,6 +93,16 @@ export default class StateMachine {
   notifyObservers(message) {
 
     this.observers.forEach(observer => observer.update(message));
+  }
+
+  resetState() {
+
+    //Task queue should be emptied by gameOver,
+    //however this ensures modularity and inso supports feature expansion (e.g. a dedicated NG button).
+    this.taskQueue = [];
+    this.running = false;
+    this.paused = false;
+    this.observers = [];
   }
 
 }

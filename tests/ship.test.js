@@ -1,33 +1,33 @@
 import {jest} from '@jest/globals';
-import Ship from "../components/ship";
+import Ship from "../src/components/ship";
 
 let ship1;
 
 beforeAll(() => {
-  ship1 = new Ship(7, 5);
+  ship1 = new Ship({id:7, x: 9, y: 8, length: 5});
   return ship1;
 });
 
-it("mock ship id", () => {
+it("mocks ship id", () => {
 
   expect(ship1.id).toBe(7);
 
 })
 
-it("mock ship length", () => {
+it("mocks ship length", () => {
 
   expect(ship1.length).toBe(5);
 
 })
 
-it("mock ship hit and isSunk", () => {
+it("mocks ship hit and isSunk", () => {
 
   expect(ship1.isSunk()).toBe(false);
-  expect(ship1.hit).toBe(0);
+  expect(ship1.damage).toBe(0);
   for(let i = 0; i < 5; i++) {
-    ship1.isHit();
+    ship1.hit();
   }
   expect(ship1.isSunk()).toBe(true);
-  expect(ship1.hit).toBe(5);
+  expect(ship1.damage).toBe(5);
 
 })
