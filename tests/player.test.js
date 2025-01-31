@@ -48,7 +48,7 @@ describe("CPUPlayer Internal Tests", () => {
   });
 });
 
-describe("CPUPlayer Output Testing", () => {
+describe("CPUPlayer Output Tests", () => {
   let testCPUPlayer, testOpponentPlayer;
 
   beforeEach(() => {
