@@ -70,7 +70,7 @@ export default let gameStates = {
       stateMachineInstance.resetState();
 
       let nextGameType = await nextGameInput();
-      if(nextGameType === "rematch"){
+      if(nextGameType === "rematch") {
         player.resetState();
         opponent.resetState();
       } else {
