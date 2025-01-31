@@ -1,4 +1,3 @@
-//stateMachine.js
 export default class StateMachine {
   /**
    * Found in gameStates.js, this is where our "state traversals" are mapped out.

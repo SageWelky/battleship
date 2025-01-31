@@ -1,29 +1,85 @@
+import Gameboard from "./gameboard";
+
 class Player {
-
-  constructor(id) {
-    this.id = id;
-  }
-  //...
-  startNewTurn(isChained = false, a = undefined, b = undefined) {
-
-    //For Players:
-    //Unlock board on DOM
-    //That's it. Just wait for an event listener to call the gameboard attack method.
-    //Inside eventListener:
-    //If returns hit === true then run startNewTurn() again, if miss run it for opponent
-
-    //For CPU:
-    //if(isChained) then(x,y = guessAdjacentToLastGuess(a,b))
-    //Do (x,y random guesses within range) while(alreadyGuessed x,y)
-    //store guess in alreadyGuessed
-    //call opponent gameboard with attack(x,y) method
-    //If returns hit === true then run startNewTurn(true, lastX, lastY) again, if miss run it for opponent
-
+  constructor() {
+    this.isCPU = false;
+    this.gameboard = new Gameboard();
   }
 
-  setupTurn() {
-    //placement logic
+  setupBoard() {
+    throw new Error("setupBoard() must be implemented");
+  }
 
+  makeMove() {
+    throw new Error("makeMove() must be implemented");
+  }
+
+  resetState() {
+    this.gameboard = new Gameboard();
+  }
+
+};
+
+class CPUPlayer extends Player {
+
+  constructor() {
+    super();
+    this.isCPU = true;
+  }
+
+  setupBoard() {
+
+    let shipPlacements = [];
+    let shipLengths = [5, 4, 3, 3, 2]
+
+    const setupShip = (shipLength) => {
+      let x;
+      let y;
+      let shipCoords = [];
+      let shipOrientation;
+
+      do {
+        shipOrientation = Math.random() < 0.5 ? "horizontal" : "vertical";
+        x = Math.floor(Math.random() * 10);
+        y = Math.floor(Math.random() * 10);
+        shipCoords = this.gameboard.getShipCoordinates({ x: x, y: y, length: shipLength, orientation: shipOrientation });
+      } while (shipPlacements.some(coord => shipCoords.includes(coord)));
+
+      this.gameboard.placeShip({ x: x, y: y, length: shipLength, orientation: shipOrientation });
+      shipPlacements = [...this.gameboard.ships.flatMap(ship => ship.coordinates)];
+    };
+
+    shipLengths.forEach(setupShip);
+  }
+
+  makeMove(opponent) {
+
+    let x, y;
+    let move = {};
+    do {
+      x = Math.floor(Math.random() * 10);
+      y = Math.floor(Math.random() * 10);
+    } while (opponent.gameboard.hashedGuesses.has(`${x},${y}`));
+    move.result = opponent.gameboard.receiveAttack({x: x, y: y});
+    return move;
   }
 
 }
+
+class HumanPlayer extends Player {
+
+  constructor() {
+    super();
+    this.isCPU = false;
+  }
+
+  setupBoard() {
+    console.log("not setup: setupBoard()");
+  }
+
+  makeMove() {
+    console.log("not setup: makeMove()");
+  }
+}
+
+export { Player, CPUPlayer, HumanPlayer };

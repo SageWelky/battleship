@@ -1,6 +1,4 @@
-//index.js
 import "./styles.css";
-import "./components/ship.js";
 import gameStates from "./components/gameStates.js";
 import StateMachine from "./components/stateMachine.js";
 import createPlayers from "./helpers/createPlayers.js";

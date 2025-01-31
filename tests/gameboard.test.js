@@ -9,7 +9,7 @@ beforeAll(() => {
   gameboard1.placeShip({x: 3, y: 2, length: 5, orientation: "vertical"});
 });
 
-it("Mocks get coordinates", ()=>{
+it("tests get coordinates", ()=>{
 
   gameboard1.placeShip({x: 3, y: 2, length: 5, orientation: "vertical"});
   let input = {x: 3, y: 2, length: 5, orientation: "vertical"};
@@ -17,7 +17,7 @@ it("Mocks get coordinates", ()=>{
   expect(coords).toEqual([[3, 2], [3, 3], [3, 4], [3, 5], [3, 6]]);
 });
 
-it("Mocks ship placement", ()=>{
+it("mocks ship placement", ()=>{
 
   expect(gameboard1.placeShip({x: 7, y: 2, length: 5, orientation: "vertical"})).toBe(2);
 
@@ -109,28 +109,6 @@ it("mocks receive attack", ()=>{
   let b = 1;
   let fooBar = `${a},${b}`;
   gameboard1.hashedGuesses.set(fooBar, "foobar");
-  expect(gameboard1.receiveAttack({x: 1, y: 1})).toBe("Unexpected error validating guess");
+  expect(gameboard1.receiveAttack({x: 1, y: 1})).toBe("Unexpected error processing guess");
   gameboard1.hashedGuesses.set(fooBar, 1);
 });
-
-//Gameboard needs to:
-
-
-//(A):
-//Handle two categories:
-//Placement phase coordinates for ships,
-//Play phase guess coordinates,
-//----------------Notes----------------
-//Input differentiation should come in the form of two different function calls
-//
-
-//(A.1):
-//Placement details:
-
-
-
-//(B):
-//Store board state:
-//0 for nothing there,
-//-1 for a miss already guessed, and -2 for a hit already guessed,
-//1-10 for the corresponding unhit ship,

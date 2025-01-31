@@ -22,10 +22,9 @@ export default class Gameboard {
 
       if(this.hashedShipCoords.get(key) !== undefined) {
 
-
         let gameOver = false;
-        //Side effect updates ship damage from hit, return checks if all sunk.
 
+        //Side effect updates ship damage from hit, return checks if all sunk.
         gameOver = this.handleHit(key);
 
         //DOM update
@@ -36,6 +35,7 @@ export default class Gameboard {
       }
 
       else {
+
         //DOM update
         return "miss";
       }
@@ -43,7 +43,7 @@ export default class Gameboard {
 
       return "Validation Error, already guessed";
     }
-    return "Unexpected error validating guess"
+    return "Unexpected error processing guess";
   }
 
   handleHit(key) {
@@ -56,6 +56,7 @@ export default class Gameboard {
       this.numShipsSunk++;
 
       if(this.numShipsSunk > 4) {
+
         return true;
       }
     }
@@ -65,8 +66,6 @@ export default class Gameboard {
   placeShip({x: x, y: y, length: length, orientation: orientation}) {
 
     let id = this.currentShipID;
-    let newShip = new Ship({id: id, x: x, y: y, length: length, orientation: orientation});
-
     let coords = this.getShipCoordinates({x: x, y: y, length: length, orientation: orientation});
 
     coords.forEach((coord) => {
@@ -76,6 +75,7 @@ export default class Gameboard {
       this.hashedShipCoords.set(key, id);
     });
 
+    let newShip = new Ship({id: id, x: x, y: y, length: length, orientation: orientation, coordinates: coords});
     this.ships.push(newShip);
     this.currentShipID++;
     return id;
@@ -94,11 +94,11 @@ export default class Gameboard {
     } else if (orientation === "vertical") {
 
       for (let i = 0; i < length; i++) {
+
         coordinates.push([x, y + i]);
       }
 
     }
     return coordinates;
   }
-
 }

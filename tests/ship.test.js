@@ -8,19 +8,19 @@ beforeAll(() => {
   return ship1;
 });
 
-it("mocks ship id", () => {
+it("tests ship id", () => {
 
   expect(ship1.id).toBe(7);
 
 })
 
-it("mocks ship length", () => {
+it("tests ship length", () => {
 
   expect(ship1.length).toBe(5);
 
 })
 
-it("mocks ship hit and isSunk", () => {
+it("tests ship hit and isSunk", () => {
 
   expect(ship1.isSunk()).toBe(false);
   expect(ship1.damage).toBe(0);
