@@ -46,6 +46,7 @@ class CPUPlayer extends Player {
       } while (shipPlacements.some(coord => shipCoords.includes(coord)));
 
       this.gameboard.placeShip({ x: x, y: y, length: shipLength, orientation: shipOrientation });
+      //We're making an array of all coordinate pairs across all current ships.
       shipPlacements = [...this.gameboard.ships.flatMap(ship => ship.coordinates)];
     };
 
