@@ -16,9 +16,7 @@ async function startupTheApplication() {
   const battleshipStateMachine = new StateMachine(gameStates);
 
   //Code for establishing players.
-  let players = await createPlayers();
-  player = players.playerOne;
-  opponent = players.playerTwo;
+  let {player, opponent} = await createPlayers();
 
   //Initializes the play screen.
   loadPlayScreen({playerOneType: player.isCPU, playerTwoType: opponent.isCPU});

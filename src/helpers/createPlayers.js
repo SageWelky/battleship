@@ -4,5 +4,5 @@ export default async function createPlayers() {
   let players = await openPtmModal();
   let p1 = players.p1isCPU ? new CPUPlayer() : new HumanPlayer();
   let p2 = players.p2isCPU ? new CPUPlayer() : new HumanPlayer();
-  return {playerOne: p1, playerTwo: p2};
+  return {player: p1, opponent: p2};
 }
