@@ -1,8 +1,12 @@
+/**
+   * Found in stateMachine.js, this is where our "state traversals" are mapped out.
+   * @param {Class} StateMachine - The states object defining transitions and logic.
+   */
 export default class StateMachine {
   /**
-   * Found in gameStates.js, this is where our "state traversals" are mapped out.
-   * @param {Object} states - The states object defining transitions and logic.
-   */
+    * StateMachine's constructor.
+    * @param {Object} states - Our states to traverse.
+    */
   constructor(states) {
 
     //Startup will read in state object, we want to initialize to setup.

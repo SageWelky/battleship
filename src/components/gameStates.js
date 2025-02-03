@@ -1,15 +1,15 @@
+import { loadPlayScreen } from "../dom/playScreen.js";
 import turnLogicHandler from "../helpers/turnLogicHandler.js";
 /**
   * @typedef {import("./stateMachine.js").default} StateMachine
   */
-
 export default let gameStates = {
 
   //Possible states for the Machine:
   setupPhase: {
 
-      /** Defined in stateMachine.js, and initialized in index.js, this what manages our flow control.
-        * @param {Object} params - Parameter object format as {...payload, stateMachineInstance} for the stateMachine.js transition method.
+      /**
+        * @param {Object} params - Parameter object formatted as {...payload, stateMachineInstance} for the stateMachine.js transition method.
         * @param {StateMachine} params.stateMachineInstance - Reference to our state machine instance for which gameStates is the corresponding "states" property.
         */
     action: async ({ player, opponent, stateMachineInstance }) => {
@@ -26,8 +26,8 @@ export default let gameStates = {
 
   newTurn: {
 
-    /** Defined in stateMachine.js, and initialized in index.js, this what manages our flow control.
-        * @param {Object} params - Parameter object format as {...payload, stateMachineInstance} for the stateMachine.js transition method.
+    /**
+        * @param {Object} params - Parameter object formatted as {...payload, stateMachineInstance} for the stateMachine.js transition method.
         * @param {StateMachine} params.stateMachineInstance - Reference to our state machine instance for which gameStates is the corresponding "states" property.
         */
     action: ({ player, opponent, stateMachineInstance }) => {
@@ -44,8 +44,8 @@ export default let gameStates = {
 
   gameOver: {
 
-    /** Defined in stateMachine.js, and initialized in index.js, this what manages our flow control.
-        * @param {Object} params - Parameter object format as {...payload, stateMachineInstance} for the stateMachine.js transition method.
+    /**
+        * @param {Object} params - Parameter object formatted as {...payload, stateMachineInstance} for the stateMachine.js transition method.
         * @param {StateMachine} params.stateMachineInstance - Reference to our state machine instance for which gameStates is the corresponding "states" property.
         */
     action: ({ winner, opponent, stateMachineInstance }) => {
@@ -60,8 +60,8 @@ export default let gameStates = {
 
   newGame: {
 
-    /** Defined in stateMachine.js, and initialized in index.js, this what manages our flow control.
-        * @param {Object} params - Parameter object format as {...payload, stateMachineInstance} for the stateMachine.js transition method.
+    /**
+        * @param {Object} params - Parameter object formatted as {...payload, stateMachineInstance} for the stateMachine.js transition method.
         * @param {StateMachine} params.stateMachineInstance - Reference to our state machine instance for which gameStates is the corresponding "states" property.
         */
     action: async ({ player, opponent, stateMachineInstance }) => {
@@ -79,7 +79,7 @@ export default let gameStates = {
         opponent = players.playerTwo;
       }
 
-      createPlaySpace({playerOneType: player.isCPU, playerTwoType: opponent.isCPU});
+      loadPlayScreen({playerOneType: player.isCPU, playerTwoType: opponent.isCPU});
       stateMachineInstance.transition("setupPhase", {player: player, opponent: opponent});
     },
     transitions: { setupPhase: "setupPhase" },

@@ -1,4 +1,4 @@
-export function loadPlayScreen(inputObject = {playerOneType: false, playerTwoType: true}) {
+export function loadStartScreen() {
 
   const content = document.getElementById('content');
   content.replaceChildren();
