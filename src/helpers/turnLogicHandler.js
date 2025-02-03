@@ -1,5 +1,4 @@
 export default function turnLogicHandler(move) {
-
   let stateInstructions = { event: null, payload: null };
 
   if (!move) return stateInstructions;

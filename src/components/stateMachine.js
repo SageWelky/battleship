@@ -8,7 +8,6 @@ export default class StateMachine {
     * @param {Object} states - Our states to traverse.
     */
   constructor(states) {
-
     //Startup will read in state object, we want to initialize to setup.
     this.currentState = "setupPhase";
     this.states = states;
@@ -19,8 +18,6 @@ export default class StateMachine {
     this.runQueue = this.runQueue.bind(this);
     //Allows for player input without needing async code.
     this.paused = false;
-    //implement fully in a future iteration of refactoring, DOM oriented
-    this.observers = [];
   }
 
   /**
@@ -30,9 +27,7 @@ export default class StateMachine {
    * @returns {void}
    */
   transition(event, payload) {
-
     this.enqueue(() => {
-
       const nextState = this.states[this.currentState].transitions[event];
       this.currentState = nextState;
 
@@ -44,18 +39,16 @@ export default class StateMachine {
   }
 
   enqueue(action) {
-
    this.taskQueue.push(action);
 
-   if(!this.running) {
+   if (!this.running) {
     this.runQueue();
    }
   }
 
   runQueue() {
-
     //This interupts running the queue until human input can 'resolve'.
-    if(this.paused) {
+    if (this.paused) {
       return;
     }
 
@@ -71,41 +64,21 @@ export default class StateMachine {
   }
 
   pause() {
-
     this.paused = true;
   }
 
   resume() {
-
     this.paused = false;
 
     //We use setTimeout to exit the 'resume context' before running the queue
     setTimeout(this.runQueue(), 100);
   }
 
-  addObserver(observer) {
-
-    this.observers.push(observer);
-  }
-
-  removeObserver(observer) {
-
-    this.observers = this.observers.filter(obs => obs !== observer);
-  }
-
-  notifyObservers(message) {
-
-    this.observers.forEach(observer => observer.update(message));
-  }
-
   resetState() {
-
     //Task queue should be emptied by gameOver,
     //however this ensures modularity and inso supports feature expansion (e.g. a dedicated NG button).
     this.taskQueue = [];
     this.running = false;
     this.paused = false;
-    this.observers = [];
   }
-
 }

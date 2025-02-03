@@ -28,7 +28,6 @@ class CPUPlayer extends Player {
   }
 
   setupBoard() {
-
     let shipPlacements = [];
     let shipLengths = [5, 4, 3, 3, 2]
 
@@ -46,7 +45,6 @@ class CPUPlayer extends Player {
       } while (shipPlacements.some(coord => shipCoords.includes(coord)));
 
       this.gameboard.placeShip({ x: x, y: y, length: shipLength, orientation: shipOrientation });
-      //We're making an array of all coordinate pairs across all current ships.
       shipPlacements = [...this.gameboard.ships.flatMap(ship => ship.coordinates)];
     };
 
@@ -54,21 +52,22 @@ class CPUPlayer extends Player {
   }
 
   makeMove(opponent) {
-
     let x, y;
     let move = {};
+
     do {
       x = Math.floor(Math.random() * 10);
       y = Math.floor(Math.random() * 10);
     } while (opponent.gameboard.hashedGuesses.has(`${x},${y}`));
+
     move.result = opponent.gameboard.receiveAttack({x: x, y: y});
+
     return move;
   }
 
 }
 
 class HumanPlayer extends Player {
-
   constructor() {
     super();
     this.isCPU = false;

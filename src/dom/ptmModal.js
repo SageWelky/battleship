@@ -13,7 +13,6 @@ export function openPtmModal() {
     playerTypeModal.style.display = "block";
 
     function retreivePlayerTypes() {
-
       let playerOne = ptmPlayerOneContainer.dataset.iscpu === "true";
       let playerTwo = ptmPlayerTwoContainer.dataset.iscpu === "true";
 

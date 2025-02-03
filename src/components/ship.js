@@ -14,10 +14,12 @@ export default class Ship {
   }
 
   isSunk() {
-    if(this.damage >= this.length) {
+    if (this.damage >= this.length) {
       this.sunk = true;
+
       return true;
     }
+
     return false;
   }
 
