@@ -6,7 +6,7 @@ export default function turnLogicHandler(player, opponent, stateMachineInstance,
 
   switch (move.result) {
     case "Awaiting Human Player Input":
-      stateMachineInstance.paused = true;
+      stateMachineInstance.pause();
       break;
 
     case "hit":

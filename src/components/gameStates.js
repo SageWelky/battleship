@@ -31,23 +31,11 @@ const gameStates = {
         * @param {StateMachine} params.stateMachineInstance - Reference to our state machine instance for which gameStates is the corresponding "states" property.
         */
     action: ({ player, opponent, stateMachineInstance }) => {
-      console.log("New turn!");
-      console.log(`Actions queued: ${stateMachineInstance.taskQueue.length}`);
-      console.log(player.allSunk);
-      console.log(opponent.allSunk);
-      console.log(player.gameboard.numShipsSunk);
-      console.log(opponent.gameboard.numShipsSunk);
-      console.log(player.gameboard.ships);
-      console.log(opponent.gameboard.ships);
-      console.log(player.gameboard.hashedGuesses);
-      console.log(player.gameboard.hashedShipCoords);
-      console.log(opponent.gameboard.hashedGuesses);
-      console.log(opponent.gameboard.hashedShipCoords);
-      //console.trace();
-      logCallStackSize();
+      //Leaving some debug code for anyone who wants to see how the queue keeps the callstack clean.
+      //logCallStackSize();
       updateUIForTurn(player, opponent);
       if(player.isCPU === true) {
-        //delayQueue(stateMachineInstance);
+        delayQueue(stateMachineInstance);
       }
       let move = player.makeMove(opponent, stateMachineInstance);
       let stateInstructions = turnLogicHandler(player, opponent, stateMachineInstance, move) || (player, opponent, stateMachineInstance, { event: null, payload: null });

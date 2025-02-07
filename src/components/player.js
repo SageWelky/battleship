@@ -86,7 +86,7 @@ class HumanPlayer extends Player {
   }
 
   setupBoard(stateMachineInstance) {
-    stateMachineInstance.paused = true;
+    stateMachineInstance.pause();
     console.log("not setup: setupBoard()");
   }
 

@@ -8,7 +8,6 @@ export default class StateMachine {
     * @param {Object} states - Our states to traverse.
     */
   constructor(states) {
-    //Startup will read in state object, we want to initialize to setup.
     this.currentState = "setupPhase";
     this.states = states;
     //The queue allows for a clean call-stack.
@@ -47,12 +46,10 @@ export default class StateMachine {
   }
 
   runQueue() {
-    //This interupts running the queue until human input can 'resolve'.
     if (this.paused) {
       return;
     }
 
-    //The task insertion needs to know if it should 'open' the queue execution context.
     this.running = true;
 
     while(this.paused === false && this.taskQueue.length > 0) {

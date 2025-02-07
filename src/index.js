@@ -14,15 +14,13 @@ async function startupTheApplication() {
   */
   const battleshipStateMachine = new StateMachine(gameStates);
 
-  //Code for establishing players.
   let {player, opponent} = await createPlayers();
 
-  //Initializes the play screen.
-  loadPlayScreen({playerOneType: player.isCPU, playerTwoType: opponent.isCPU});
+  await loadPlayScreen({playerOneType: player.isCPU, playerTwoType: opponent.isCPU});
 
-  //Start the action of the initial state.
   battleshipStateMachine.states[battleshipStateMachine.currentState]
   .action({ player: player, opponent: opponent, stateMachineInstance: battleshipStateMachine});
+
   startButton.removeEventListener("click", startupTheApplication);
 }
 

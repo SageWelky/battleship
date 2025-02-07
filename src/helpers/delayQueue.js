@@ -1,7 +1,6 @@
 export default function delayQueue(stateMachineInstance) {
-  stateMachineInstance.paused = true;
+  stateMachineInstance.pause();
   setTimeout(() => {
-    stateMachineInstance.paused = false;
-    stateMachineInstance.runQueue();
-  }, 300);
+    stateMachineInstance.resume();
+  }, 650);
 }
