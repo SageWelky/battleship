@@ -17,7 +17,7 @@ describe("CPUPlayer Internal Tests", () => {
   test("setupBoard places ships correctly", () => {
     testCPUPlayer.setupBoard();
     expect(testCPUPlayer.gameboard.ships.length).toBe(5);
-    expect([...testCPUPlayer.gameboard.ships.flatMap(ship => ship.coordinates)].length).toBe(17);
+    expect([...testCPUPlayer.gameboard.hashedShipCoords.keys()].length).toBe(17);
   });
 
   test("makeMove calls receiveAttack with valid coordinates", () => {

@@ -29,6 +29,8 @@ class CPUPlayer extends Player {
     this.isCPU = true;
   }
 
+  //getShipCoordinates should be made a helper.
+  //
   setupBoard(stateMachineInstance) {
     let shipLengths = [5, 4, 3, 3, 2]
 
@@ -52,23 +54,20 @@ class CPUPlayer extends Player {
       } while (shipCoords.some(([x, y]) => this.gameboard.hashedShipCoords.has(`${x},${y}`)));
 
       this.gameboard.placeShip({ x: x, y: y, length: shipLength, orientation: shipOrientation });
-      console.log(shipCoords);
-      console.log(this.gameboard.hashedShipCoords);
     };
 
     shipLengths.forEach(setupShip);
+    //Send ship info to DOM.
   }
 
   makeMove(opponent) {
     let x, y;
     let move = {};
 
-    console.log("Entering Loop");
     do {
       x = Math.floor(Math.random() * 10);
       y = Math.floor(Math.random() * 10);
     } while (opponent.gameboard.hashedGuesses.has(`${x},${y}`));
-    console.log("Exited Loop!!!");
 
     move.result = opponent.gameboard.receiveAttack({x: x, y: y});
     if (move.result === "All ships sunk") {
@@ -88,6 +87,8 @@ class HumanPlayer extends Player {
   setupBoard(stateMachineInstance) {
     stateMachineInstance.pause();
     console.log("not setup: setupBoard()");
+    //DOM side logic needs to call placeShip for each ship
+    //Upon placement of all ships needs to call stateMachineInstance.resume()
   }
 
   makeMove() {

@@ -1,5 +1,5 @@
 export function loadPlayScreen(inputObject = {playerOneType: false, playerTwoType: true}) {
-  //Swap to hardcoding this later.
+  //Swap to hardcoding this later, and write calls to child component creation.
   const content = document.getElementById('content');
   content.replaceChildren();
   content.innerHTML =

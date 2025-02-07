@@ -34,9 +34,11 @@ const gameStates = {
       //Leaving some debug code for anyone who wants to see how the queue keeps the callstack clean.
       //logCallStackSize();
       updateUIForTurn(player, opponent);
+
       if(player.isCPU === true) {
         delayQueue(stateMachineInstance);
       }
+
       let move = player.makeMove(opponent, stateMachineInstance);
       let stateInstructions = turnLogicHandler(player, opponent, stateMachineInstance, move) || (player, opponent, stateMachineInstance, { event: null, payload: null });
 

@@ -1,10 +1,9 @@
 export default class Ship {
-  constructor({id, x, y, length, orientation, coordinates}) {
+  constructor({id, x, y, length, orientation}) {
     this.id = id;
     this.length = length;
     this.damage = 0;
     this.origin = [x, y];
-    this.coordinates = coordinates;
     this.orientation = orientation;
     this.sunk = false;
   }

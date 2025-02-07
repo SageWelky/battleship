@@ -58,6 +58,7 @@ export default class Gameboard {
     return false;
   }
 
+  //getShipCoordinates should be made a helper.
   placeShip({x: x, y: y, length: length, orientation: orientation}) {
     let id = this.currentShipID;
     let coords = this.getShipCoordinates({x: x, y: y, length: length, orientation: orientation});
@@ -70,13 +71,14 @@ export default class Gameboard {
       this.hashedShipCoords.set(key, id);
     });
 
-    let newShip = new Ship({id: id, x: x, y: y, length: length, orientation: orientation, coordinates: coords});
+    let newShip = new Ship({id: id, x: x, y: y, length: length, orientation: orientation});
     this.ships.push(newShip);
     this.currentShipID++;
 
     return id;
   }
 
+  //getShipCoordinates should be made a helper.
   getShipCoordinates({x: x, y: y, length: length, orientation: orientation}) {
     let coordinates = [];
 
