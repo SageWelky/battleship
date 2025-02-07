@@ -23,6 +23,7 @@ export default class Gameboard {
 
         //DOM update
         if (gameOver && typeof gameOver === "boolean") {
+          console.log("All ships sunk!");
           return "All ships sunk";
         }
 

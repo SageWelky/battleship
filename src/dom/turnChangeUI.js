@@ -5,7 +5,7 @@ export function updateUIForTurn(player, opponent) {
   let lastPlayerId = playerDisplay.dataset.playerId;
   playerDisplay.dataset.playerId = `${player.id}`
 
-  if (lastPlayer !== `${player.id}`){
+  if (lastPlayerId !== `${player.id}`){
     let activeBoard = document.getElementById(`board-${player.id}`);
     let opponentBoard = document.getElementById(`board-${opponent.id}`);
 

@@ -3,6 +3,8 @@ export function loadPlayScreen(inputObject = {playerOneType: false, playerTwoTyp
   content.replaceChildren();
   content.innerHTML =
   `
-
+  <div id="player-display" data-player-id="none"></div>
+  <div class="board" id="board-1"></div>
+  <div class="board" id="board-2"></div>
   `;
 }

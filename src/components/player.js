@@ -1,12 +1,14 @@
 import Gameboard from "./gameboard";
 
 class Player {
-  constructor() {
+  constructor(id) {
+    this.id = id;
     this.isCPU = false;
+    this.allSunk = false;
     this.gameboard = new Gameboard();
   }
 
-  setupBoard() {
+  setupBoard(stateMachineInstance) {
     throw new Error("setupBoard() must be implemented");
   }
 
@@ -22,30 +24,36 @@ class Player {
 
 class CPUPlayer extends Player {
 
-  constructor() {
-    super();
+  constructor(id) {
+    super(id);
     this.isCPU = true;
   }
 
-  setupBoard() {
-    let shipPlacements = [];
+  setupBoard(stateMachineInstance) {
     let shipLengths = [5, 4, 3, 3, 2]
 
     const setupShip = (shipLength) => {
       let x;
       let y;
       let shipCoords = [];
-      let shipOrientation;
+      let shipOrientation = "vertical";
 
       do {
         shipOrientation = Math.random() < 0.5 ? "horizontal" : "vertical";
-        x = Math.floor(Math.random() * 10);
-        y = Math.floor(Math.random() * 10);
+        if (shipOrientation === "horizontal") {
+          x = Math.floor(Math.random() * (10 - shipLength));
+          y = Math.floor(Math.random() * 10);
+        } else if (shipOrientation === "vertical") {
+          x = Math.floor(Math.random() * 10);
+          y = Math.floor(Math.random() * (10 - shipLength));
+        }
+
         shipCoords = this.gameboard.getShipCoordinates({ x: x, y: y, length: shipLength, orientation: shipOrientation });
-      } while (shipPlacements.some(coord => shipCoords.includes(coord)));
+      } while (shipCoords.some(([x, y]) => this.gameboard.hashedShipCoords.has(`${x},${y}`)));
 
       this.gameboard.placeShip({ x: x, y: y, length: shipLength, orientation: shipOrientation });
-      shipPlacements = [...this.gameboard.ships.flatMap(ship => ship.coordinates)];
+      console.log(shipCoords);
+      console.log(this.gameboard.hashedShipCoords);
     };
 
     shipLengths.forEach(setupShip);
@@ -55,25 +63,30 @@ class CPUPlayer extends Player {
     let x, y;
     let move = {};
 
+    console.log("Entering Loop");
     do {
       x = Math.floor(Math.random() * 10);
       y = Math.floor(Math.random() * 10);
     } while (opponent.gameboard.hashedGuesses.has(`${x},${y}`));
+    console.log("Exited Loop!!!");
 
     move.result = opponent.gameboard.receiveAttack({x: x, y: y});
-
+    if (move.result === "All ships sunk") {
+      this.allSunk = true;
+    }
     return move;
   }
 
 }
 
 class HumanPlayer extends Player {
-  constructor() {
-    super();
+  constructor(id) {
+    super(id);
     this.isCPU = false;
   }
 
-  setupBoard() {
+  setupBoard(stateMachineInstance) {
+    stateMachineInstance.paused = true;
     console.log("not setup: setupBoard()");
   }
 

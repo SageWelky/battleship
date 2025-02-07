@@ -1,7 +1,8 @@
-export default function turnLogicHandler(move) {
+export default function turnLogicHandler(player, opponent, stateMachineInstance, move) {
   let stateInstructions = { event: null, payload: null };
 
   if (!move) return stateInstructions;
+  console.log(`Player ${player.id} has ${move.result}.`);
 
   switch (move.result) {
     case "Awaiting Human Player Input":
