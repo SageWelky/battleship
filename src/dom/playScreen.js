@@ -1,4 +1,5 @@
 export function loadPlayScreen(inputObject = {playerOneType: false, playerTwoType: true}) {
+  //Swap to hardcoding this later.
   const content = document.getElementById('content');
   content.replaceChildren();
   content.innerHTML =

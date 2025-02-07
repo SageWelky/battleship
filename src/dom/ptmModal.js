@@ -1,8 +1,8 @@
 export function openPtmModal() {
 
-  //display modal logic here:
-  //NEEDS TO BE WRITTEN
+  //Replace with proper construction later on.
   const modalAnchor = document.getElementById('modal-anchor');
+  modalAnchor.replaceChildren();
   modalAnchor.innerHTML =
   `
   <div class="player-type-modal">
