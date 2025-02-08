@@ -1,30 +1,12 @@
 export function openPtmModal() {
 
   //Replace with proper construction later on.
-  const modalAnchor = document.getElementById('modal-anchor');
-  modalAnchor.replaceChildren();
-  modalAnchor.innerHTML =
-  `
-  <div class="player-type-modal">
-
-    <div class="ptm-container" id="ptm-player-one-container">
-
-      <div class="ptm-option active" data-iscpu="false">Human</div>
-      <div class="ptm-option" data-iscpu="true">CPU</div>
-
-    </div>
-
-    <div class="ptm-container" id="ptm-player-two-container">
-
-      <<div class="ptm-option" data-iscpu="false">Human</div>
-      <div class="ptm-option active" data-iscpu="true">CPU</div>
-
-    </div>
-
-    <button id="ptm-confirm-button">Confirm</button>
-
-  </div>
-  `;
+  const ptmModal = document.getElementById("player-type-modal");
+  if (!document.startViewTransition) {
+    ptmModal.classList.add("open");
+  } else {
+    document.startViewTransition(() => ptmModal.classList.add("open"));
+  }
 
   //player selection logic here:
   return new Promise((resolve) => {
@@ -35,11 +17,15 @@ export function openPtmModal() {
     function setPlayerType(event) {
       event.target.closest(".ptm-container").querySelectorAll(".ptm-option")
       .forEach( option => option.classList.remove("active"));
-      event.target.closest(".ptm-option").classList.add("active");
-    }
 
-    document.querySelectorAll(".ptm-option")
-    .forEach(option => option.addEventListener("click", setPlayerType));
+      if (!document.startViewTransition) {
+        event.target.closest(".ptm-option").classList.add("active");
+      } else {
+        document.startViewTransition(() => {
+          event.target.closest(".ptm-option").classList.add("active");
+        });
+      }
+    }
 
     function retreivePlayerTypes() {
       let playerOne = ptmPlayerOneContainer.querySelector(".active").dataset.iscpu === "true";
@@ -53,11 +39,21 @@ export function openPtmModal() {
       resolve({ p1isCPU: playerOne, p2isCPU: playerTwo});
     }
 
+    document.querySelectorAll(".ptm-option")
+    .forEach(option => option.addEventListener("click", setPlayerType));
+
     ptmConfirmButton.addEventListener("click", retreivePlayerTypes);
   });
 }
 
 function closePtmModal() {
-  const modalAnchor = document.getElementById('modal-anchor');
-  modalAnchor.replaceChildren();
+  const ptmModal = document.getElementById("player-type-modal");
+
+  if (!document.startViewTransition) {
+    ptmModal.classList.remove("open");
+  } else {
+    document.startViewTransition(() => {
+      ptmModal.classList.remove("open");
+    });
+  }
 }

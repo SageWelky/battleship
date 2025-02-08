@@ -6,11 +6,81 @@
   <title>Document</title>
 </head>
 <body>
-  <div id="content">
-    <button id="start-button">START</button>
-    <!-- hardcode start screen -->
+
+  <div id="application-container">
+
+    <div id="play-screen-background-container">
+      <div class="vignette">
+        <img src="./assets/backgroundimage.jpg" alt="Ship on the water">
+      </div>
+    </div>
+
+    <div id="content-section">
+      <div id="start-screen">
+        <h1 id="title-splash" class="title">BATTLESHIP</h1>
+        <button id="start-button" class="button">START!</button>
+      </div>
+
+      <div id="play-screen">
+        <header class="play-display">
+          <div id="header-info-container">
+            <div id="play-screen-title" class="title">BATTLESHIP</div>
+            <div id="player-display" data-player-id="none"></div>
+          </div>
+          <div id="player-1-health-container" class="health-container">
+            <div id="player-1-health-label" class="health-label">Player 1 Health: </div>
+            <div id="player-1-health-value" class="health-value">5</div>
+          </div>
+          <div id="player-2-health-container" class="health-container">
+            <div id="player-2-health-label" class="health-label">Player 2 Health: </div>
+            <div id="player-2-health-value" class="health-value">5</div>
+          </div>
+        </header>
+
+        <div id="player-boards" class="play-section">
+          <div id="player-1-container" class="player-container">
+            <div id="board-1" class="board"></div>
+            <div class="piece-compartment"></div>
+            <div class="piece-compartment"></div>
+          </div>
+          <div id="player-2-container" class="player-container">
+            <div id="board-2" class="board"></div>
+            <div class="piece-compartment"></div>
+            <div class="piece-compartment"></div>
+          </div>
+        </div>
+
+        <footer>
+          <div id="info-container">
+          </div>
+        </footer>
+      </div>
+    </div>
+
+    <div id="modal-section">
+      <div id="player-type-modal" class="modal">
+        <div class="modal-content">
+          <div class="ptm-container" id="ptm-player-one-container">
+            <div class="ptm-option active" data-iscpu="false">Human</div>
+            <div class="ptm-option" data-iscpu="true">CPU</div>
+          </div>
+          <div class="ptm-container" id="ptm-player-two-container">
+            <div class="ptm-option" data-iscpu="false">Human</div>
+            <div class="ptm-option active" data-iscpu="true">CPU</div>
+          </div>
+          <button id="ptm-confirm-button">Confirm</button>
+        </div>
+      </div>
+
+      <div id="turn-modal" class="modal">
+        <div class="modal-content">
+          <h2 id="privacy-screen-label" class="turn-modal-text">Privacy Screen For Turn Swap</h2>
+          <h3 id="privacy-screen-instruction" class="turn-modal-text">Click Anywhere to Continue</h3>
+        </div>
+      </div>
+    </div>
+
   </div>
-  <div id="modal-anchor">
-  </div>
+
 </body>
 </html>

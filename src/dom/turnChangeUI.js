@@ -23,9 +23,9 @@ export function updateUIForTurn(player, opponent) {
 //Write a turn modal HTML into the playScreen content insertion.
 function showTurnModal() {
   let modal = document.getElementById("turn-modal");
-  modal.style.display = "block";
+  modal.classList.add("open");;
 
   document.getElementById("continue-turn").onclick = () => {
-    modal.style.display = "none";
+    modal.classList.remove("open");;
   };
 }

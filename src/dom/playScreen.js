@@ -1,11 +1,21 @@
 export function loadPlayScreen(inputObject = {playerOneType: false, playerTwoType: true}) {
   //Swap to hardcoding this later, and write calls to child component creation.
-  const content = document.getElementById('content');
-  content.replaceChildren();
-  content.innerHTML =
-  `
-  <div id="player-display" data-player-id="none"></div>
-  <div class="board" id="board-1"></div>
-  <div class="board" id="board-2"></div>
-  `;
+  const startScreen = document.getElementById("start-screen");
+  const playScreen = document.getElementById("play-screen");
+
+  if (!document.startViewTransition) {
+    startScreen.style.display = "none";
+  } else {
+    document.startViewTransition(() => {
+      startScreen.style.display = "none";
+    });
+  }
+
+  if (!document.startViewTransition) {
+    playScreen.style.display = "grid";
+  } else {
+    document.startViewTransition(() => {
+      playScreen.style.display = "grid";
+    });
+  }
 }
