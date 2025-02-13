@@ -26,7 +26,7 @@ async function startUpTheApplication() {
   setTimeout(() => {
     battleshipStateMachine.states[battleshipStateMachine.currentState]
     .action({ player: player, opponent: opponent, stateMachineInstance: battleshipStateMachine});
-  }, 700);
+  }, 600);
 
   startButton.removeEventListener("click", startUpTheApplication);
 }

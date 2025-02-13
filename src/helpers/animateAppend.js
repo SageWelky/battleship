@@ -1,4 +1,4 @@
-export async function animateAppend(parentTarget, childToAppend, customViewTransitionName = "active-append") {
+export async function animateAppend(parentTarget, childToAppend, customViewTransitionName = "append") {
   let originalVTNameHolder = {};
   originalVTNameHolder.name = childToAppend.style?.viewTransitionName;
 

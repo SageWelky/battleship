@@ -448,32 +448,47 @@
 }
 
 @layer utilities {
-  ::view-transition-group(board-*-tile-*),
-  ::view-transition-group(left),
-  ::view-transition-group(right),
-  ::view-transition-group(title) {
-    animation-duration: 0.5s;
+  /* ::view-transition-old(append),
+  ::view-transition-new(append) {
+    animation-duration: 1.5s;
     animation-timing-function: ease-in-out;
   }
 
-  ::view-transition-old(board-*-tile-*),
-  ::view-transition-new(board-*-tile-*),
+  ::view-transition-group(append) {
+    animation-duration: 1.5;
+    animation-timing-function: ease-in-out;
+  } */
+
+
+  ::view-transition-group(left),
+  ::view-transition-group(right),
+  ::view-transition-group(title) {
+    animation-duration: 0.7s;
+    animation-timing-function: ease-in-out;
+  }
+
+
   ::view-transition-old(left),
   ::view-transition-new(left),
   ::view-transition-old(right),
   ::view-transition-new(right),
   ::view-transition-old(title),
   ::view-transition-new(title) {
-    animation-duration: 0.5s;
+    animation-duration: 0.7s;
   }
 
-  #start-screen>.grid-tile {
+  #start-screen>.grid-tile,
+  body>.grid-tile {
     min-width: 5cqw;
     min-height: 10cqh;
     max-width: 5cqw;
     max-height: 10cqh;
     border: 1px solid pink;
     transform: scale(0.9);
+  }
+
+  body>.grid-tile {
+    z-index: -1;
   }
 
   #player-type-modal>.modal-content {

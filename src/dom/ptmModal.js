@@ -2,7 +2,6 @@ export function openPtmModal(firstLaunch) {
 
   //Replace with proper construction later on.
   const ptmModal = document.getElementById('player-type-modal');
-  ptmModal.style.viewTransitionName = 'modal';
   ptmModal.style.display = 'grid';
 
   //player selection logic here:
@@ -31,7 +30,6 @@ export function openPtmModal(firstLaunch) {
       document.querySelectorAll('.ptm-option')
       .forEach(option => option.removeEventListener('click', setPlayerType));
       ptmConfirmButton.removeEventListener('click', () => retreivePlayerTypes(firstLaunch));
-      ptmModal.style.viewTransitionName = 'none';
       if (!firstLaunch) {
         closePtmModal();
       }
