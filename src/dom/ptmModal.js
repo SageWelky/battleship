@@ -17,9 +17,9 @@ export function openPtmModal(firstLaunch) {
       if (!document.startViewTransition) {
         event.target.closest('.ptm-option').classList.add('active');
       } else {
-        document.startViewTransition(() => {
+        //document.startViewTransition(() => {
           event.target.closest('.ptm-option').classList.add('active');
-        });
+        //});
       }
     }
 
