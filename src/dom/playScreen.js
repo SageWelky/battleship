@@ -1,21 +1,41 @@
-export function loadPlayScreen(inputObject = {playerOneType: false, playerTwoType: true}) {
-  //Swap to hardcoding this later, and write calls to child component creation.
-  const startScreen = document.getElementById("start-screen");
-  const playScreen = document.getElementById("play-screen");
+import { closePtmModal } from "./ptmModal";
+
+export async function loadPlayScreen(inputObject = {playerOneType: false, playerTwoType: true}) {
+  const splashTitle = document.getElementById('title-splash');
+  const playScreenTitle = document.getElementById('play-screen-title');
+  const ptmPlayerOneContainer = document.getElementById('ptm-player-one-container');
+  const ptmPlayerTwoContainer = document.getElementById('ptm-player-two-container');
+  const boardOne = document.getElementById('board-1');
+  const boardTwo = document.getElementById('board-2');
+
+  splashTitle.style.viewTransitionName = 'title';
+  playScreenTitle.style.viewTransitionName = 'title';
+  ptmPlayerOneContainer.style.viewTransitionName = 'left';
+  boardOne.style.viewTransitionName = 'left';
+  ptmPlayerTwoContainer.style.viewTransitionName = 'right';
+  boardTwo.style.viewTransitionName = 'right';
 
   if (!document.startViewTransition) {
-    startScreen.style.display = "none";
+    document.getElementById('play-screen').style.display = 'grid';
+    document.getElementById('player-type-modal').style.display = 'none';
+    document.getElementById('start-screen').style.display = 'none';
   } else {
-    document.startViewTransition(() => {
-      startScreen.style.display = "none";
+    let transition = document.startViewTransition(() => {
+      document.getElementById('play-screen').style.display = 'grid';
+      document.getElementById('player-type-modal').style.display = 'none';
+      document.getElementById('start-screen').style.display = 'none';
     });
+    await transition.finishd;
   }
 
-  if (!document.startViewTransition) {
-    playScreen.style.display = "grid";
-  } else {
-    document.startViewTransition(() => {
-      playScreen.style.display = "grid";
-    });
-  }
+  setTimeout(() => {
+    splashTitle.style.viewTransitionName = '';
+    playScreenTitle.style.viewTransitionName = '';
+
+    ptmPlayerOneContainer.style.viewTransitionName = '';
+    boardOne.style.viewTransitionName = '';
+
+    ptmPlayerTwoContainer.style.viewTransitionName = '';
+    boardTwo.style.viewTransitionName = '';
+  }, 500);
 }

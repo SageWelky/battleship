@@ -21,10 +21,10 @@
         <button id="start-button" class="button">START!</button>
       </div>
 
-      <div id="play-screen">
+      <div id="play-screen" style="display: none;">
+        <h2 id="play-screen-title" class="title">BATTLESHIP</h2>
         <header class="play-display">
           <div id="header-info-container">
-            <div id="play-screen-title" class="title">BATTLESHIP</div>
             <div id="player-display" data-player-id="none"></div>
           </div>
           <div id="player-1-health-container" class="health-container">
@@ -39,19 +39,23 @@
 
         <div id="player-boards" class="play-section">
           <div id="player-1-container" class="player-container">
-            <div id="board-1" class="board"></div>
-            <div class="piece-compartment"></div>
-            <div class="piece-compartment"></div>
+            <div class="board-aspect-ratio-container">
+              <div id="board-1" class="board"></div>
+            </div>
+            <div id="player-1-pc-side" class="piece-compartment player-container-side"></div>
+            <div id="player-1-pc-lower" class="piece-compartment player-container-lower"></div>
           </div>
           <div id="player-2-container" class="player-container">
-            <div id="board-2" class="board"></div>
-            <div class="piece-compartment"></div>
-            <div class="piece-compartment"></div>
+            <div class="board-aspect-ratio-container">
+              <div id="board-2" class="board"></div>
+            </div>
+            <div id="player-2-pc-side" class="piece-compartment player-container-side"></div>
+            <div id="player-2-pc-lower" class="piece-compartment player-container-lower"></div>
           </div>
         </div>
 
         <footer>
-          <div id="info-container">
+          <div id="footer-info-container">
           </div>
         </footer>
       </div>

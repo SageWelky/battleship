@@ -52,7 +52,7 @@ export default class StateMachine {
 
     this.running = true;
 
-    while(this.paused === false && this.taskQueue.length > 0) {
+    while(!this.paused && this.taskQueue.length > 0) {
       let action = this.taskQueue.shift();
       action();
     }
