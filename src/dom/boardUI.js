@@ -1,7 +1,7 @@
 import { animateAppend } from "../helpers/animateAppend";
 import { makeCached } from "../helpers/makeCached";
 
-export async function generateEmptyBoard({startingOwnerId,
+export async function generateBoardTiles({startingOwnerId,
                                     startingOwnerType = "board",
                                     numberOfSquaresPerSide = 10,
                                     eventualOwnerId = null,
@@ -29,10 +29,6 @@ export async function generateEmptyBoard({startingOwnerId,
     namingText = `${eventualOwnerType}-${eventualOwnerId}`;
   }
 
-  function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
   let div;
 
   let y = 0;
@@ -41,10 +37,12 @@ export async function generateEmptyBoard({startingOwnerId,
       let gridId = `${x},${y}`;
       div = document.createElement('div');
       div.setAttribute('id', `${namingText}-tile-${gridId}`);
-      div.style.width = `${100.00 / numberOfSquaresPerSide}cqw`;
-      div.style.height = `${100.00 / numberOfSquaresPerSide}cqw`;
       div.classList.add('grid-tile');
-      // div.style.viewTransitionName = `${namingText}-tile-${((x + 1) + (y * 10)) + cachedIndex}`;
+      div.style.gridRow = `${y + 1}`;
+      div.style.gridColumn = `${x + 1}`;
+      // div.style.width = `${100.00 / numberOfSquaresPerSide}cqw`;
+      // div.style.height = `${100.00 / numberOfSquaresPerSide}cqw`;
+      div.style.viewTransitionName = `${namingText}-tile-${((x + 1) + (y * 10)) + cachedIndex}`;
       correspondingAppendTarget.appendChild(div);
       // (x % 5) === 0 ? await delay(100) : null;
     }
@@ -53,7 +51,7 @@ export async function generateEmptyBoard({startingOwnerId,
   return div.style.viewTransitionName;
 }
 
-export const generateEmptyBoardCached = makeCached(generateEmptyBoard);
+export const generateBoardTilesCached = makeCached(generateBoardTiles);
 
 
 export async function boardGridTileSet(boardId) {
@@ -61,7 +59,6 @@ export async function boardGridTileSet(boardId) {
   while ( y < 10 ) {
     for ( let x = 0; x < 10; x++ ) {
       let gridId = `${x},${y}`;
-      console.log(document.getElementById(`board-${boardId}-tile-${gridId}`));
       document.getElementById(`board-${boardId}`).appendChild(document.getElementById(`board-${boardId}-tile-${gridId}`));
     }
     y++;

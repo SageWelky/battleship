@@ -1,15 +1,15 @@
-export function updateUIForTurn(player, opponent) {
+export function updateUIForTurn(activePlayer, opponent) {
 
-  let playerDisplay = document.getElementById(`player-display`);
+  let activePlayerDisplay = document.getElementById(`player-display`);
   //Make sure player-display has: data-player-id = 'none' both on startup and reset.
-  let lastPlayerId = playerDisplay.dataset.playerId;
-  playerDisplay.dataset.playerId = `${player.id}`
+  let lastPlayerId = activePlayerDisplay.dataset.playerId;
+  activePlayerDisplay.dataset.playerId = `${activePlayer.id}`
 
-  if (lastPlayerId !== `${player.id}`){
-    let activeBoard = document.getElementById(`board-${player.id}`);
+  if (lastPlayerId !== `${activePlayer.id}`){
+    let activeBoard = document.getElementById(`board-${activePlayer.id}`);
     let opponentBoard = document.getElementById(`board-${opponent.id}`);
 
-    if (!player.isCPU && !opponent.isCPU) {
+    if (!activePlayer && !opponent.isCPU) {
       opponentBoard.classList.add('hidden');
       showTurnModal();
       activeBoard.classList.remove('hidden');

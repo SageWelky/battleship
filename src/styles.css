@@ -318,8 +318,8 @@
 
   .board {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(10%, 1fr));
-    grid-template-rows: repeat(auto-fill, minmax(10%, 1fr));
+    grid-template-columns: repeat(10, minmax(10%, 1fr));
+    grid-template-rows: repeat(10, minmax(10%, 1fr));
     position: absolute;
     top: 0;
     bottom: 0;
@@ -406,6 +406,7 @@
   }
 
   .ptm-option {
+    transform: scale(0.9);
     filter: brightness(80%);
     transition: all 0.2s ease-in-out;
     text-align: center;
@@ -416,6 +417,7 @@
   }
 
   .ptm-option.active {
+    transform: scale(1.05);
     filter: brightness(100%);
     box-shadow: 0 0 20px 10px hsl(201, 71%, 70%);
     border-color: var(--selected-accent-color);
@@ -492,8 +494,8 @@
   }
 
   #player-type-modal>.modal-content {
-    height: 40dvh;
-    margin-top: 20dvh;
+    height: 46dvh;
+    margin-top: 22dvh;
     display: grid;
     grid-template:
                   "a a a b b b" 1fr

@@ -1,10 +1,7 @@
 export function openPtmModal(firstLaunch) {
-
-  //Replace with proper construction later on.
   const ptmModal = document.getElementById('player-type-modal');
   ptmModal.style.display = 'grid';
 
-  //player selection logic here:
   return new Promise((resolve) => {
     let ptmConfirmButton = document.querySelector( '#ptm-confirm-button' );
     let ptmPlayerOneContainer = document.querySelector( '#ptm-player-one-container' );
@@ -13,14 +10,7 @@ export function openPtmModal(firstLaunch) {
     function setPlayerType(event) {
       event.target.closest('.ptm-container').querySelectorAll('.ptm-option')
       .forEach( option => option.classList.remove('active'));
-
-      if (!document.startViewTransition) {
-        event.target.closest('.ptm-option').classList.add('active');
-      } else {
-        //document.startViewTransition(() => {
-          event.target.closest('.ptm-option').classList.add('active');
-        //});
-      }
+      event.target.closest('.ptm-option').classList.add('active');
     }
 
     function retreivePlayerTypes(firstLaunch) {

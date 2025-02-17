@@ -1,6 +1,11 @@
 export async function animateAppend(parentTarget, childToAppend, customViewTransitionName = "append") {
-  let originalVTNameHolder = {};
-  originalVTNameHolder.name = childToAppend.style?.viewTransitionName;
+  let originalVTNHolder = {};
+  let reinstateVTNBool = false;
+  if ('viewTransitionName' in childToAppend.style) {
+    originalVTNHolder.name = childToAppend.style?.viewTransitionName;
+    reinstateVTNBool = true;
+  }
+
 
   childToAppend.style.viewTransitionName = customViewTransitionName;
   childToAppend.classList.add('active-appending-child');
@@ -8,12 +13,16 @@ export async function animateAppend(parentTarget, childToAppend, customViewTrans
   if (!document.startViewTransition) {
     parentTarget.appendChild(childToAppend);
   } else {
-    const transition = document.startViewTransition(() => {
+    let transition = document.startViewTransition(() => {
       parentTarget.appendChild(childToAppend);
     });
-    // await transition.finished;
+    await transition.finished;
   }
 
   childToAppend.classList.remove('active-appending-child');
-  childToAppend.style.viewTransitionName = originalVTNameHolder?.name;
+  if (reinstateVTNBool) {
+    childToAppend.style.viewTransitionName = originalVTNHolder?.name;
+  } else {
+    childToAppend.style.removeProperty('view-transition-name');
+  }
 }

@@ -8,5 +8,5 @@ export default async function createPlayers(firstLaunch = false) {
   console.log(p1.id);
   console.log(p2.id);
 
-  return {player: p1, opponent: p2};
+  return {activePlayer: p1, opponent: p2};
 }

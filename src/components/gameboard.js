@@ -12,34 +12,45 @@ export default class Gameboard {
   receiveAttack({x: x, y: y}) {
     const key = `${x},${y}`;
 
+    let move = {};
+    move.guess = [x, y];
+    move.key = key;
+
     if (this.hashedGuesses.get(key) === undefined) {
       this.hashedGuesses.set(key, 1);
 
       if (this.hashedShipCoords.get(key) !== undefined) {
-        let gameOver = false;
+        let sunkShip = false;
 
-        //Side effect updates ship damage from hit, return checks if all sunk.
-        gameOver = this.handleHit(key);
+        sunkShip = this.handleHit(key);
 
-        //DOM update
-        if (gameOver && typeof gameOver === "boolean") {
-          console.log("All ships sunk!");
-          return "All ships sunk";
+        if (sunkShip[0]) {
+          if (this.numShipsSunk > 4) {
+            move.result = "All ships sunk!!!";
+            move.sunkShipId = sunkShip[1];
+
+            return move;
+          }
+          move.result = "Ship sunk!!";
+          move.sunkShipId = sunkShip[1];
         }
 
-        return "hit";
+        move.result = "Hit!";
+        return move;
       }
 
       else {
-        //DOM update
-        return "miss";
+        move.result = "Miss";
+        return move;
       }
-    } else if (this.hashedGuesses.get(key) === 1) {
 
-      return "Validation Error, already guessed";
+    } else if (this.hashedGuesses.get(key) === 1) {
+      move.result = "Validation Error, already guessed.";
+      return move;
     }
 
-    return "Unexpected error processing guess";
+    move.result = "Unexpected error processing guess.";
+    return move;
   }
 
   handleHit(key) {
@@ -49,13 +60,11 @@ export default class Gameboard {
     if (this.ships[id - 1].isSunk()) {
       this.numShipsSunk++;
 
-      if (this.numShipsSunk > 4) {
+      return [true, id];
 
-        return true;
-      }
     }
 
-    return false;
+    return [false, id];
   }
 
   //getShipCoordinates should be made a helper.

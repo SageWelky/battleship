@@ -69,7 +69,7 @@ class CPUPlayer extends Player {
       y = Math.floor(Math.random() * 10);
     } while (opponent.gameboard.hashedGuesses.has(`${x},${y}`));
 
-    move.result = opponent.gameboard.receiveAttack({x: x, y: y});
+    move = opponent.gameboard.receiveAttack({x: x, y: y});
     if (move.result === "All ships sunk") {
       this.allSunk = true;
     }

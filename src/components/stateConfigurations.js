@@ -1,65 +1,65 @@
 import { loadPlayScreen } from "../dom/playScreen.js";
-import turnLogicHandler from "../helpers/turnLogicHandler.js";
+import determineNextState from "../helpers/determineNextState.js";
 import { updateUIForTurn } from "../dom/turnChangeUI.js";
-import delayQueue from "../helpers/delayQueue.js";
-import { animateAppend } from "../helpers/animateAppend.js";
-import { boardGridTileSet } from "../dom/boardUI.js";
+import { delayQueue } from "../helpers/delay.js";
+import { handleDisplayUpdate } from "../dom/updateDisplay.js";
 
 /**
   * @typedef {import("./stateMachine.js").default} StateMachine
   */
 
-const gameStates = {
+const stateConfigurations = {
   setupPhase: {
     /**
       * @param {Object} params - Parameter object formatted as {...payload, stateMachineInstance} for the stateMachine.js transition method.
-      * @param {StateMachine} params.stateMachineInstance - Reference to our state machine instance for which gameStates is the corresponding "states" property.
+      * @param {StateMachine} params.stateMachineInstance - Reference to our state machine instance for which stateConfigurations is the corresponding "states" property.
       */
-    action: ({ player, opponent, stateMachineInstance }) => {
-      boardGridTileSet(1);
-      boardGridTileSet(2);
-      let setupPlayer = player.setupBoard(stateMachineInstance);
+    action: ({ activePlayer, opponent, stateMachineInstance }) => {
+      let setupPlayer = activePlayer.setupBoard(stateMachineInstance);
       let setupOpponent = opponent.setupBoard(stateMachineInstance);
 
       if (setupPlayer instanceof Promise || setupOpponent instanceof Promise) {
         Promise.all([setupPlayer, setupOpponent]).then(() => {
-          stateMachineInstance.transition("newTurn", { player: opponent, opponent: player });
+          stateMachineInstance.transition("startTurn", { activePlayer: opponent, opponent: activePlayer });
         });
       } else {
-        stateMachineInstance.transition("newTurn", { player: opponent, opponent: player });
+        stateMachineInstance.transition("startTurn", { activePlayer: opponent, opponent: activePlayer });
       }
     },
-    transitions: { newTurn: "newTurn" },
+    transitions: { startTurn: "startTurn" },
   },
 
-  newTurn: {
+  startTurn: {
     /**
         * @param {Object} params - Parameter object formatted as {...payload, stateMachineInstance} for the stateMachine.js transition method.
-        * @param {StateMachine} params.stateMachineInstance - Reference to our state machine instance for which gameStates is the corresponding "states" property.
+        * @param {StateMachine} params.stateMachineInstance - Reference to our state machine instance for which stateConfigurations is the corresponding "states" property.
         */
-    action: ({ player, opponent, stateMachineInstance }) => {
+    action: ({ activePlayer, opponent, stateMachineInstance }) => {
       //Leaving some debug code for anyone who wants to see how the queue keeps the callstack clean.
       //logCallStackSize();
-      updateUIForTurn(player, opponent);
+      updateUIForTurn(activePlayer, opponent);
 
-      if(player?.isCPU === true) {
+      if(activePlayer?.isCPU === true) {
         delayQueue(stateMachineInstance);
       }
 
-      let move = player.makeMove(opponent, stateMachineInstance);
-      let stateInstructions = turnLogicHandler(player, opponent, stateMachineInstance, move) || (player, opponent, stateMachineInstance, { event: null, payload: null });
+      let move = activePlayer.makeMove(opponent, stateMachineInstance);
+      let stateInstructions = determineNextState(activePlayer, opponent, stateMachineInstance, move) || (activePlayer, opponent, stateMachineInstance, { event: null, payload: null });
+      //Maybe swap to two explicit observer functions? Would be more extensible, but probably more bloated, too.
+      let uiPayload = { uiPayloadType: "turn", move: move, opponent: opponent  };
+      handleDisplayUpdate(payload);
 
       if (stateInstructions?.event && stateInstructions?.payload) {
         stateMachineInstance.transition(stateInstructions.event, stateInstructions.payload);
       }
     },
-    transitions: { newTurn: "newTurn", gameOver: "gameOver" },
+    transitions: { startTurn: "startTurn", gameOver: "gameOver" },
   },
 
   gameOver: {
     /**
         * @param {Object} params - Parameter object formatted as {...payload, stateMachineInstance} for the stateMachine.js transition method.
-        * @param {StateMachine} params.stateMachineInstance - Reference to our state machine instance for which gameStates is the corresponding "states" property.
+        * @param {StateMachine} params.stateMachineInstance - Reference to our state machine instance for which stateConfigurations is the corresponding "states" property.
         */
     action: ({ winner, opponent, stateMachineInstance }) => {
       console.log(`Game over! Player ${winner.id} has won!`);
@@ -68,32 +68,32 @@ const gameStates = {
 
       //Call DOM loading for the victory screen.
     },
-    transitions: { newGame: "newGame" },
+    transitions: { restartGame: "restartGame" },
   },
 
-  newGame: {
+  restartGame: {
     /**
         * @param {Object} params - Parameter object formatted as {...payload, stateMachineInstance} for the stateMachine.js transition method.
-        * @param {StateMachine} params.stateMachineInstance - Reference to our state machine instance for which gameStates is the corresponding "states" property.
+        * @param {StateMachine} params.stateMachineInstance - Reference to our state machine instance for which stateConfigurations is the corresponding "states" property.
         */
-    action: async ({ player, opponent, stateMachineInstance }) => {
+    action: async ({ activePlayer, opponent, stateMachineInstance }) => {
       //A new match requires default state.
       stateMachineInstance.resetState();
 
       let nextGameType = await nextGameInput();
 
       if (nextGameType === "rematch") {
-        player.resetState();
+        activePlayer.resetState();
         opponent.resetState();
 
       } else {
         let players = await createPlayers();
-        player = players.playerOne;
+        activePlayer = players.playerOne;
         opponent = players.playerTwo;
       }
 
-      loadPlayScreen({playerOneType: player.isCPU, playerTwoType: opponent.isCPU});
-      stateMachineInstance.transition("setupPhase", {player: player, opponent: opponent});
+      loadPlayScreen({playerOneType: activePlayer, playerTwoType: opponent.isCPU});
+      stateMachineInstance.transition("setupPhase", {activePlayer: activePlayer, opponent: opponent});
     },
     transitions: { setupPhase: "setupPhase" },
   },
@@ -110,4 +110,4 @@ function logCallStackSize() {
   }
 }
 
-export default gameStates;
+export default stateConfigurations;

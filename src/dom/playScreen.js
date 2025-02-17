@@ -1,4 +1,5 @@
 import { closePtmModal } from "./ptmModal";
+import { generateBoardTilesCached } from "./boardUI";
 
 export async function loadPlayScreen(inputObject = {playerOneType: false, playerTwoType: true}) {
   const splashTitle = document.getElementById('title-splash');
@@ -15,6 +16,9 @@ export async function loadPlayScreen(inputObject = {playerOneType: false, player
   ptmPlayerTwoContainer.style.viewTransitionName = 'right';
   boardTwo.style.viewTransitionName = 'right';
 
+  ptmPlayerOneContainer.style.zIndex = 999;
+  ptmPlayerTwoContainer.style.zIndex = 999;
+
   if (!document.startViewTransition) {
     document.getElementById('play-screen').style.display = 'grid';
     document.getElementById('player-type-modal').style.display = 'none';
@@ -28,6 +32,9 @@ export async function loadPlayScreen(inputObject = {playerOneType: false, player
     await transition.finishd;
   }
 
+  ptmPlayerOneContainer.style.zIndex = '';
+  ptmPlayerTwoContainer.style.zIndex = '';
+
   setTimeout(() => {
     splashTitle.style.viewTransitionName = '';
     playScreenTitle.style.viewTransitionName = '';
@@ -38,4 +45,7 @@ export async function loadPlayScreen(inputObject = {playerOneType: false, player
     ptmPlayerTwoContainer.style.viewTransitionName = '';
     boardTwo.style.viewTransitionName = '';
   }, 500);
+
+  generateBoardTilesCached({startingOwnerId: 'board-1'});
+  generateBoardTilesCached({startingOwnerId: 'board-2'});
 }
