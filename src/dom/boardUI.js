@@ -1,5 +1,7 @@
 import { animateAppend } from "../helpers/animateAppend";
 import { makeCached } from "../helpers/makeCached";
+import { getShipCoordinates } from "../helpers/shipHelpers.js";
+import { ensureShipHasObjectFormatting } from "../helpers/shipHelpers.js";
 
 export async function generateBoardTiles({startingOwnerId,
                                     startingOwnerType = "board",
@@ -38,11 +40,11 @@ export async function generateBoardTiles({startingOwnerId,
       div = document.createElement('div');
       div.setAttribute('id', `${namingText}-tile-${gridId}`);
       div.classList.add('grid-tile');
-      div.style.gridRow = `${y + 1}`;
+      div.style.gridRow = `${(numberOfSquaresPerSide - y) + 0}`;
       div.style.gridColumn = `${x + 1}`;
       // div.style.width = `${100.00 / numberOfSquaresPerSide}cqw`;
       // div.style.height = `${100.00 / numberOfSquaresPerSide}cqw`;
-      div.style.viewTransitionName = `${namingText}-tile-${((x + 1) + (y * 10)) + cachedIndex}`;
+      //div.style.viewTransitionName = `${namingText}-tile-${((x + 1) + (y * 10)) + cachedIndex}`;
       correspondingAppendTarget.appendChild(div);
       // (x % 5) === 0 ? await delay(100) : null;
     }
@@ -54,13 +56,43 @@ export async function generateBoardTiles({startingOwnerId,
 export const generateBoardTilesCached = makeCached(generateBoardTiles);
 
 
-export async function boardGridTileSet(boardId) {
-  let y = 0;
-  while ( y < 10 ) {
-    for ( let x = 0; x < 10; x++ ) {
-      let gridId = `${x},${y}`;
-      document.getElementById(`board-${boardId}`).appendChild(document.getElementById(`board-${boardId}-tile-${gridId}`));
-    }
-    y++;
+export function createShipImage(length, shipId, appendTarget) {
+  let ship = document.createElement('div');
+  ship.classList.add('ship');
+
+  ship.style.setProperty('--ship-length', length);
+  ship.dataset.length = length;
+
+  ship.style.setProperty('id', shipId);
+  ship.dataset.shipId = shipId;
+
+  document.getElementById(appendTarget).appendChild(ship);
+  return ship;
+}
+
+export function placeShipImageOnBoard(shipToAppend, appendTarget, numberOfSquaresPerSide = 10) {
+  let placementShipImage = ensureShipHasObjectFormatting(shipToAppend);
+  let {x, y, length, orientation} = placementShipImage;
+
+  let ship = shipToAppend;
+
+  x = parseInt(x);
+  y = parseInt(y);
+  length = parseInt(length);
+
+
+  //We add 1 because the gridlines start at 1 and our coordinates start at 0.
+  //Gridlines needed for 'n' areas is 'n + 1', thus our start index is like 'tare weight' for length.
+  if (orientation === "horizontal") {
+    y = numberOfSquaresPerSide - y - 1;
+    ship.style.gridRow = `${y + 1} / span 1`;
+    ship.style.gridColumn = `${x + 1} / span ${length}`;
+  } else if (orientation === "vertical") {
+    y = numberOfSquaresPerSide - y - length;
+    ship.style.gridRow = `${y + 1} / span ${length}`;
+    ship.style.gridColumn = `${x + 1} / span 1`;
+    ship.classList.add('vertical');
   }
+  document.getElementById(appendTarget).appendChild(ship);
+  return ship;
 }

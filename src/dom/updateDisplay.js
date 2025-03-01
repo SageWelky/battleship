@@ -13,7 +13,7 @@ function updateTileAppearance(move, opponent) {
     }
 
     if (move?.sunkShipId) {
-        placeShipImage("enemy", opponent.ships[move.sunkShipId - 1]);
+        placeShipImageOnBoard(opponent.ships[move.sunkShipId - 1], `board-${tileBoardId}`);
         //const sunkShipTiles = document.querySelectorAll(`[data-ship-id='${move.sunkShipId}']`);
         //NEED TO COME BACK TO THIS!!
         //SET THIS TO A DATASET INSTEAD!! SAME WITH HIT AND MISS, DONT FORGET

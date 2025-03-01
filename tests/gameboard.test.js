@@ -1,4 +1,5 @@
 import Gameboard from "../src/components/gameboard";
+import { getShipCoordinates } from "../src/helpers/shipHelpers.js";
 
 let gameboard1;
 
@@ -13,7 +14,7 @@ it("tests get coordinates", ()=>{
 
   gameboard1.placeShip({x: 3, y: 2, length: 5, orientation: "vertical"});
   let input = {x: 3, y: 2, length: 5, orientation: "vertical"};
-  let coords = gameboard1.getShipCoordinates({...input});
+  let coords = getShipCoordinates({...input});
   expect(coords).toEqual([[3, 2], [3, 3], [3, 4], [3, 5], [3, 6]]);
 });
 

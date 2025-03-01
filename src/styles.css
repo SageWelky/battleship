@@ -237,8 +237,6 @@
     padding-top: 0;
     padding-bottom: 0;
     height: 100%;
-    /* max-height: max(135px, 50dvw);
-    max-width: 100dvw; */
     grid-column: 1 / 9;
     grid-row: 3 / 4;
     display: grid;
@@ -273,8 +271,6 @@
   .player-container {
     height: 100%;
     width: 100%;
-    /* max-height: max(82px, 100cqh);
-    max-width: max(82px, 100cqh);; */
     container-type: size;
     display: grid;
     grid-template-areas:
@@ -284,11 +280,18 @@
   }
 
   .player-container-side {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: start;
+    flex-direction: row;
     grid-area: b;
     height: 100cqh;
     width: 17cqh;
     margin-left: 3cqh;
     background-color: var(--secondary-text-color);
+    gap: 3cqh;
+    padding: 4cqh;
   }
 
   .player-container-lower {
@@ -446,7 +449,45 @@
     border: 1px solid pink;
     box-sizing: border-box;
     transform: scale(0.9);
+    position: relative;
   }
+
+  .ship {
+    background-color: rgba(240, 128, 128, 0.747);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ship:not(.vertical) {
+    background-image: url("./assets/testship.png");
+    background-size: 100% 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .ship.vertical {
+    background-image: url("./assets/testshipvertical.png");
+    background-size: 100% 100%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .draggable:not(.vertical) {
+    background-image: url("./assets/testship.png");
+    background-size: 100% 100%;
+  }
+
+  .draggable.vertical {
+    background-image: url("./assets/testshipvertical.png");
+    background-size: 100% 100%;
+  }
+
 }
 
 @layer utilities {
@@ -462,14 +503,28 @@
   } */
 
 
+
+  ::view-transition-group(title) {
+    animation-duration: 0.6s;
+    animation-timing-function: ease-in-out;
+  }
+
   ::view-transition-group(left),
   ::view-transition-group(right),
-  ::view-transition-group(title) {
-    animation-duration: 0.7s;
+  ::view-transition-group(side),
+  ::view-transition-group(lower),
+  ::view-transition-group(boards) {
+    animation-duration: 0.4s;
     animation-timing-function: ease-in-out;
   }
 
 
+  ::view-transition-old(side),
+  ::view-transition-new(side),
+  ::view-transition-old(lower),
+  ::view-transition-new(lower),
+  ::view-transition-old(boards),
+  ::view-transition-new(boards),
   ::view-transition-old(left),
   ::view-transition-new(left),
   ::view-transition-old(right),
@@ -631,15 +686,66 @@
     }
   }
 
-
-  #player-1-container {
+  #player-1-container:not(.setup) {
     justify-content: end;
     grid-area: a;
   }
 
-  #player-2-container {
+  #player-2-container:not(.setup) {
     justify-content: start;
     grid-area: b;
+  }
+
+  .player-container.setup {
+    justify-content: center;
+  }
+
+  .player-container.setup-opponent {
+    display: none;
+  }
+
+  #player-boards.setup {
+    display: block;
+  }
+
+  .board>.ship {
+    /* Come back and move this to .in-play after testing */
+    pointer-events: none;
+
+    position: absolute;
+  }
+
+  .player-container-side>.ship {
+    position: relative;
+  }
+
+  .player-container-side>.draggable.vertical {
+    height: calc(8% * var(--ship-length));
+    width: 20%;
+  }
+
+  .player-container-side>.draggable:not(.vertical) {
+    height: 8%;
+    width: calc(20% * var(--ship-length));
+    background-color: blueviolet;
+  }
+
+  .draggable.in-play {
+    pointer-events: none;
+  }
+
+  .hide-draggable-ghost {
+    transform:translateX(-9999px);
+  }
+
+  .can-drop {
+    background-color: var(--accent-color);
+    transform: scale(1.0);
+  }
+
+  .can-not-drop {
+    background-color: firebrick;
+    transform: scale(1.0);
   }
 }
 

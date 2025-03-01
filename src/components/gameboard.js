@@ -1,4 +1,6 @@
 import Ship from "./ship.js";
+import { getShipCoordinates } from "../helpers/shipHelpers.js";
+import { ensureShipHasObjectFormatting } from "../helpers/shipHelpers.js";
 
 export default class Gameboard {
   constructor() {
@@ -6,7 +8,7 @@ export default class Gameboard {
     this.hashedGuesses = new Map();
     this.numShipsSunk = 0;
     this.ships = [];
-    this.currentShipID = 1;
+    this.currentShipId = 1;
   }
 
   receiveAttack({x: x, y: y}) {
@@ -67,10 +69,57 @@ export default class Gameboard {
     return [false, id];
   }
 
-  //getShipCoordinates should be made a helper.
-  placeShip({x: x, y: y, length: length, orientation: orientation}) {
-    let id = this.currentShipID;
-    let coords = this.getShipCoordinates({x: x, y: y, length: length, orientation: orientation});
+  canPlaceShip(shipCandidate, isCPU = true, numberOfSquaresPerSide = 10) {
+    shipCandidate = ensureShipHasObjectFormatting(shipCandidate);
+
+    function flipY(yCoord, numberOfSquaresPerSide = 10) {
+      return ((numberOfSquaresPerSide - 1) - yCoord);
+    }
+
+    function offsetY(yCoord, length) {
+      return (yCoord + 1 - (2 * length));
+    }
+
+    if (shipCandidate.coordinates.some(([x, y]) => this.hashedShipCoords.has(`${x},${y}`))) {
+      //console.log("Can't place ship because coord found in hashed ships.");
+      return false;
+    }
+
+    if (isCPU) {
+      if (shipCandidate.orientation === "vertical" && !((shipCandidate.y + shipCandidate.length) <= 10)) {
+        return false;
+      }
+
+      if (shipCandidate.orientation === "horizontal" && !((shipCandidate.x + shipCandidate.length) <= 10)) {
+        return false;
+      }
+    } else {
+      if (shipCandidate.orientation === "horizontal" && (!((shipCandidate.x + shipCandidate.length) <= 10) || !(shipCandidate.x >= 0))) {
+        return false;
+      }
+
+      if (shipCandidate.orientation === "vertical" && (!((shipCandidate.y + shipCandidate.length) <= 10) || !((shipCandidate.y) >= 0))) {
+        return false;
+      }
+    }
+
+
+
+    return true;
+  }
+
+  placeShip(shipToPlace, customCoords = null) {
+    let coords;
+    let placementShip = ensureShipHasObjectFormatting(shipToPlace);
+    let {x, y, length, orientation} = placementShip;
+
+    if (customCoords) {
+      coords = shipToPlace;
+    } else {
+      coords = getShipCoordinates({x: x, y: y, length: length, orientation: orientation});
+    }
+
+    let id = this.currentShipId;
 
     coords.forEach((coord) => {
       let xCoord = coord[0];
@@ -82,26 +131,8 @@ export default class Gameboard {
 
     let newShip = new Ship({id: id, x: x, y: y, length: length, orientation: orientation});
     this.ships.push(newShip);
-    this.currentShipID++;
+    this.currentShipId++;
 
     return id;
-  }
-
-  //getShipCoordinates should be made a helper.
-  getShipCoordinates({x: x, y: y, length: length, orientation: orientation}) {
-    let coordinates = [];
-
-    if (orientation === "horizontal") {
-      for (let i = 0; i < length; i++) {
-        coordinates.push([x + i, y]);
-      }
-
-    } else if (orientation === "vertical") {
-      for (let i = 0; i < length; i++) {
-        coordinates.push([x, y + i]);
-      }
-    }
-
-    return coordinates;
   }
 }

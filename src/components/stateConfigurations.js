@@ -20,10 +20,10 @@ const stateConfigurations = {
 
       if (setupPlayer instanceof Promise || setupOpponent instanceof Promise) {
         Promise.all([setupPlayer, setupOpponent]).then(() => {
-          stateMachineInstance.transition("startTurn", { activePlayer: opponent, opponent: activePlayer });
+          stateMachineInstance.transition("startTurn", { activePlayer: activePlayer, opponent: opponent });
         });
       } else {
-        stateMachineInstance.transition("startTurn", { activePlayer: opponent, opponent: activePlayer });
+        stateMachineInstance.transition("startTurn", { activePlayer: activePlayer, opponent: opponent });
       }
     },
     transitions: { startTurn: "startTurn" },
@@ -47,7 +47,7 @@ const stateConfigurations = {
       let stateInstructions = determineNextState(activePlayer, opponent, stateMachineInstance, move) || (activePlayer, opponent, stateMachineInstance, { event: null, payload: null });
       //Maybe swap to two explicit observer functions? Would be more extensible, but probably more bloated, too.
       let uiPayload = { uiPayloadType: "turn", move: move, opponent: opponent  };
-      handleDisplayUpdate(payload);
+      handleDisplayUpdate(uiPayload);
 
       if (stateInstructions?.event && stateInstructions?.payload) {
         stateMachineInstance.transition(stateInstructions.event, stateInstructions.payload);

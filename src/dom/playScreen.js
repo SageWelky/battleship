@@ -1,5 +1,6 @@
 import { closePtmModal } from "./ptmModal";
 import { generateBoardTilesCached } from "./boardUI";
+import { placeShipImageOnBoard } from "./boardUI";
 
 export async function loadPlayScreen(inputObject = {playerOneType: false, playerTwoType: true}) {
   const splashTitle = document.getElementById('title-splash');
@@ -8,6 +9,7 @@ export async function loadPlayScreen(inputObject = {playerOneType: false, player
   const ptmPlayerTwoContainer = document.getElementById('ptm-player-two-container');
   const boardOne = document.getElementById('board-1');
   const boardTwo = document.getElementById('board-2');
+  let playerId = 1;
 
   splashTitle.style.viewTransitionName = 'title';
   playScreenTitle.style.viewTransitionName = 'title';
@@ -29,7 +31,7 @@ export async function loadPlayScreen(inputObject = {playerOneType: false, player
       document.getElementById('player-type-modal').style.display = 'none';
       document.getElementById('start-screen').style.display = 'none';
     });
-    await transition.finishd;
+    await transition.finished;
   }
 
   ptmPlayerOneContainer.style.zIndex = '';
@@ -40,12 +42,13 @@ export async function loadPlayScreen(inputObject = {playerOneType: false, player
     playScreenTitle.style.viewTransitionName = '';
 
     ptmPlayerOneContainer.style.viewTransitionName = '';
-    boardOne.style.viewTransitionName = '';
+    // boardOne.style.viewTransitionName = '';
 
     ptmPlayerTwoContainer.style.viewTransitionName = '';
-    boardTwo.style.viewTransitionName = '';
+    // boardTwo.style.viewTransitionName = '';
   }, 500);
 
   generateBoardTilesCached({startingOwnerId: 'board-1'});
   generateBoardTilesCached({startingOwnerId: 'board-2'});
+
 }

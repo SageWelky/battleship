@@ -1,4 +1,8 @@
 import Gameboard from "./gameboard";
+import { createShipImage, placeShipImageOnBoard } from "../dom/boardUI";
+import { battleshipGameBox } from "../definitions/boardgamePieces";
+import { getShipCoordinates } from "../helpers/shipHelpers.js";
+import { delayTime } from "../helpers/delay.js";
 
 class Player {
   constructor(id) {
@@ -22,6 +26,7 @@ class Player {
 
 };
 
+
 class CPUPlayer extends Player {
 
   constructor(id) {
@@ -29,35 +34,35 @@ class CPUPlayer extends Player {
     this.isCPU = true;
   }
 
-  //getShipCoordinates should be made a helper.
-  //
-  setupBoard(stateMachineInstance) {
-    let shipLengths = [5, 4, 3, 3, 2]
+  setupBoard(stateMachineInstance, numberOfSquaresPerSide = 10) {
+    let shipLengths = battleshipGameBox.ships.shipLengths;
 
     const setupShip = (shipLength) => {
-      let x;
-      let y;
-      let shipCoords = [];
-      let shipOrientation = "vertical";
+      let currentShip = {};
+      currentShip.length = shipLength;
+      currentShip.orientation = "";
+      currentShip.x;
+      currentShip.y;
+      currentShip.coordinates = [];
 
       do {
-        shipOrientation = Math.random() < 0.5 ? "horizontal" : "vertical";
-        if (shipOrientation === "horizontal") {
-          x = Math.floor(Math.random() * (10 - shipLength));
-          y = Math.floor(Math.random() * 10);
-        } else if (shipOrientation === "vertical") {
-          x = Math.floor(Math.random() * 10);
-          y = Math.floor(Math.random() * (10 - shipLength));
+        currentShip.orientation = Math.random() < 0.5 ? "horizontal" : "vertical";
+        if (currentShip.orientation === "horizontal") {
+          currentShip.x = Math.floor(Math.random() * (10 - shipLength));
+          currentShip.y = Math.floor(Math.random() * 10);
+        } else if (currentShip.orientation === "vertical") {
+          currentShip.x = Math.floor(Math.random() * 10);
+          currentShip.y = Math.floor(Math.random() * (10 - shipLength));
         }
 
-        shipCoords = this.gameboard.getShipCoordinates({ x: x, y: y, length: shipLength, orientation: shipOrientation });
-      } while (shipCoords.some(([x, y]) => this.gameboard.hashedShipCoords.has(`${x},${y}`)));
+        currentShip.coordinates = getShipCoordinates(currentShip);
 
-      this.gameboard.placeShip({ x: x, y: y, length: shipLength, orientation: shipOrientation });
+      } while (!this.gameboard.canPlaceShip(currentShip));
+
+      this.gameboard.placeShip(currentShip);
     };
 
     shipLengths.forEach(setupShip);
-    //Send ship info to DOM.
   }
 
   makeMove(opponent) {
@@ -78,17 +83,205 @@ class CPUPlayer extends Player {
 
 }
 
+
 class HumanPlayer extends Player {
   constructor(id) {
     super(id);
     this.isCPU = false;
   }
 
-  setupBoard(stateMachineInstance) {
-    stateMachineInstance.pause();
-    console.log("not setup: setupBoard()");
-    //DOM side logic needs to call placeShip for each ship
-    //Upon placement of all ships needs to call stateMachineInstance.resume()
+  setupBoard(stateMachineInstance, numberOfSquaresPerSide = 10) {
+
+    return new Promise((resolve) => {
+      const opponentId = this.id === 1 ? 2 : 1;
+      const playerId = this.id; //Num used to specify player, board, etc. across both logic & DOM elements.
+      const logicPlayerBoard = this.gameboard; //Ref to this player's board instance in logic.
+      const uiPlayerBoard = document.getElementById(`board-${playerId}`); //Ref to this player's board instance in ui.
+      const shipLengths = battleshipGameBox.ships.shipLengths; //Ship lengths in tile units.
+      const shipDomIds = battleshipGameBox.ships.shipDomIds; //Array of DOM ID strings to use for ships.
+
+      const side = document.getElementById(`player-${playerId}-pc-side`);
+      const lower = document.getElementById(`player-${playerId}-pc-lower`);
+      const opponentContainer = document.getElementById(`player-${opponentId}-container`);
+      const playerContainer = document.getElementById(`player-${playerId}-container`);
+      const allBoardsContainer = document.getElementById('player-boards');
+      side.style.viewTransitionName = 'side';
+      lower.style.viewTransitionName = 'lower';
+      allBoardsContainer.style.viewTransitionName = 'boards';
+      console.log(side);
+
+      let offsetFromMouse;
+      let placedShips = 0; //Index we're at, and number of ships done with setup.
+      let currentDraggablePiece; //Reference currently being drag-clicked element.
+
+
+      async function transitionSetup() {
+
+        if (!document.startViewTransition) {
+          opponentContainer.classList.add('setup-opponent');
+          side.style.width = '45cqh';
+          allBoardsContainer.classList.add('setup');
+          playerContainer.classList.add('setup');
+          playerContainer.style.removeProperty('grid-area');
+          primeDraggablesAndContainers();
+        } else {
+
+          let transition = document.startViewTransition(() => {
+            opponentContainer.classList.add('setup-opponent');
+            allBoardsContainer.classList.add('setup');
+            playerContainer.classList.add('setup');
+          });
+          await transition.finished;
+
+          // transition = document.startViewTransition(() => {
+
+          // });
+          await transition.finished;
+          transition = document.startViewTransition(() => {
+            side.style.width = '45cqh';
+            primeDraggablesAndContainers();
+          });
+          await transition.finished
+        }
+        // side.style.viewTransitionName = '';
+        // opponentContainer.style.viewTransitionName = '';
+        // playerContainer.style.viewTransitionName = '';
+        // allBoardsContainer.style.viewTransitionName = '';
+        // lower.style.viewTransitionName = '';
+      }
+
+      transitionSetup();
+      document.addEventListener("keyup", rotate);
+
+      function rotate(event) {
+        event = event || window.event;
+        if (event.which === 82) {
+          event.preventDefault();
+          let pieces = document.querySelectorAll('.draggable');
+          pieces.forEach((piece) => piece.classList.toggle('vertical'));
+        }
+      }
+
+      function primeDraggablesAndContainers() {
+        uiPlayerBoard.querySelectorAll('.grid-tile').forEach((tile) => {
+          tile.addEventListener('dragover', (e) => dragOver(e));
+          tile.addEventListener('drop', (e) => dragDrop(e, logicPlayerBoard));
+          tile.addEventListener('dragenter', (e) => dragEnter(e, logicPlayerBoard));
+        });
+
+        for (let i = 0; i < shipDomIds.length; i++) {
+          let ship = createShipImage(shipLengths[i], shipDomIds[i], `player-${playerId}-pc-side`);
+          ship.ondragstart = onDragStart;
+          ship.ondragend = onDragEnd;
+          ship.draggable = true;
+          ship.classList.add('draggable');
+          ship.classList.add('vertical');
+        }
+      }
+
+      function onDragStart(e) {
+        currentDraggablePiece = e.target;
+        let dragShipId = e.target.id;
+        let numberOfIncrements = e.target.dataset.length;
+        let mousePosition;
+        let targetEdge;
+        let size;
+        e.target.dataset.placed = 'false';
+
+        setTimeout(function(){
+          e.target.classList.add('hide-draggable-ghost');
+        });
+
+        if (currentDraggablePiece.classList.contains('vertical')) {
+          mousePosition = e.clientY;
+          targetEdge = e.target.getBoundingClientRect().top;
+          size = e.target.offsetHeight;
+          e.target.dataset.offsetFromMouse = numberOfIncrements - Math.floor((mousePosition - targetEdge) / (size / numberOfIncrements)) - 1;
+        } else {
+          mousePosition = e.clientX;
+          targetEdge = e.target.offsetLeft;
+          size = e.target.offsetWidth;
+          e.target.dataset.offsetFromMouse = Math.floor((mousePosition - targetEdge) / (size / numberOfIncrements));
+        }
+        // console.log(`MP: ${mousePosition}`);
+        // console.log(`TE: ${targetEdge}`);
+        // console.log(`Size: ${size}`);
+        // console.log(`Increments: ${numberOfIncrements}`);
+        // console.log(`Offset From Mouse: ${e.target.dataset.offsetFromMouse }`);
+
+        e.dataTransfer.setData('text', dragShipId);
+      }
+
+      function dragEnter(event, logicPlayerBoard) {
+        const gridTile = event.target;
+        let shipElement = currentDraggablePiece;
+
+        shipElement.dataset.x = gridTile.id.slice(-3, -2);
+        shipElement.dataset.y = gridTile.id.slice(-1);
+        shipElement.dataset.orientation = shipElement.classList.contains('vertical') ? 'vertical' : 'horizontal';
+
+        shipElement.dataset.x = (shipElement.dataset.orientation !== 'vertical') ? shipElement.dataset.x - parseInt(shipElement.dataset.offsetFromMouse) : shipElement.dataset.x;
+        shipElement.dataset.y = (shipElement.dataset.orientation === 'vertical') ? shipElement.dataset.y - parseInt(shipElement.dataset.offsetFromMouse) : shipElement.dataset.y;
+
+        let coordinates = getShipCoordinates(shipElement);
+
+        uiPlayerBoard.querySelectorAll('.can-drop').forEach((tile) => tile.classList.remove('can-drop'));
+        uiPlayerBoard.querySelectorAll('.can-not-drop').forEach((tile) => tile.classList.remove('can-not-drop'));
+
+        if (logicPlayerBoard.canPlaceShip(shipElement, false)) {
+          coordinates.forEach((coordinatePair) => {
+            let gridTileX = coordinatePair[0];
+            let gridTileY = coordinatePair[1];
+            let overlappedTile = document.getElementById(`board-${playerId}-tile-${gridTileX},${gridTileY}`);
+            overlappedTile?.classList.add('can-drop');
+          });
+        } else {
+          coordinates.forEach((coordinatePair) => {
+            let gridTileX = coordinatePair[0];
+            let gridTileY = coordinatePair[1];
+            let overlappedTile = document.getElementById(`board-${playerId}-tile-${gridTileX},${gridTileY}`);
+            overlappedTile?.classList.add('can-not-drop');
+          });
+        }
+      }
+
+      function dragOver(event) {
+        event.preventDefault();
+      }
+
+      function dragDrop(e, logicPlayerBoard) {
+        if (logicPlayerBoard.canPlaceShip(currentDraggablePiece, false)) {
+          logicPlayerBoard.placeShip(currentDraggablePiece);
+          placeShipImageOnBoard(currentDraggablePiece, `board-${playerId}`);
+          placedShips++;
+          currentDraggablePiece.dataset.placed = 'true';
+          currentDraggablePiece.classList.remove('draggable');
+        } else {
+          currentDraggablePiece.dataset.placed = 'false';
+          return;
+        }
+
+        if (placedShips > 4) {
+          uiPlayerBoard.querySelectorAll('.grid-tile').forEach((tile) => {
+            tile.removeEventListener('dragover', (e) => dragOver(e));
+            tile.removeEventListener('drop', (e) => dragDrop(e, logicPlayerBoard));
+            tile.removeEventListener('dragenter', (e) => dragEnter(e, logicPlayerBoard));
+          });
+
+          document.removeEventListener("keyup", rotate);
+
+          resolve(placedShips);
+        }
+      }
+
+      function onDragEnd(e) {
+        setTimeout(function(){
+            e.target.classList.remove('hide-draggable-ghost');
+        });
+        uiPlayerBoard.querySelectorAll('.can-drop')?.forEach((tile) => tile.classList.remove('can-drop'));
+        uiPlayerBoard.querySelectorAll('.can-not-drop')?.forEach((tile) => tile.classList.remove('can-not-drop'));
+      }
+    });
   }
 
   makeMove() {
@@ -97,3 +290,26 @@ class HumanPlayer extends Player {
 }
 
 export { Player, CPUPlayer, HumanPlayer };
+
+
+
+
+
+// --------------------------------------------------------------------------------
+
+
+//On setupBoard:
+//Create 5 ships and append them to the piece container
+//Resolve once 5 ships have given the signal for a successful drop.
+
+//On dragStart:
+//Need to know where ship was grabbed
+//Parse this to be number of tiles left or down to be the number of the origin coordinate
+
+//On hover:
+//Use hover target to relay drop information to grab cursor tile, and use distance to origin coordinate
+//to offset target tile such that origin of ship lines up with new target after offset
+
+//On dropEvent:
+//Place the ship if valid placement and create logical element
+//Otherwise return out
