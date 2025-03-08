@@ -21,14 +21,11 @@ const stateConfigurations = {
       */
     action: ({ activePlayer, opponent, stateMachineInstance }) => {
       let setupPlayer = activePlayer.setupBoard(stateMachineInstance);
-      console.log("Setup Player: ", setupPlayer);
-      console.log(opponent.isSetupComplete);
 
       if (opponent.isSetupComplete === false) {
         if (setupPlayer instanceof Promise) {
           console.log("Promise found in setup phase");
           setupPlayer.then(() => {
-            console.log(setupPlayer);
             stateMachineInstance.transition("transitionActivePlayer", { activePlayer: activePlayer, opponent: opponent }, true);
             stateMachineInstance.transition("setupPhase", { activePlayer: opponent, opponent: activePlayer });
           });
@@ -41,7 +38,6 @@ const stateConfigurations = {
         if (setupPlayer instanceof Promise) {
           console.log("Promise found in setup phase");
           setupPlayer.then(() => {
-            console.log(setupPlayer);
             stateMachineInstance.transition("transitionActivePlayer", { activePlayer: activePlayer, opponent: opponent }, true);
             stateMachineInstance.transition("startTurn", { activePlayer: opponent, opponent: activePlayer });
           });
@@ -51,7 +47,6 @@ const stateConfigurations = {
           stateMachineInstance.transition("startTurn", { activePlayer: opponent, opponent: activePlayer });
         }
       }
-      console.log("Setup Ping.");
     },
     transitions: { transitionActivePlayer: "transitionActivePlayer", setupPhase: "setupPhase", startTurn: "startTurn" },
   },
@@ -78,9 +73,22 @@ const stateConfigurations = {
       if (move instanceof Promise) {
         move.then((data) => {
           let move = data;
-          console.log("Turn Promise Resolved as:");
-          console.log(move);
-          console.log(move.result);
+          let stateInstructions = determineNextState(activePlayer, opponent, stateMachineInstance, move) || (activePlayer, opponent, stateMachineInstance, { event: null, payload: null });
+          let uiPayload = { uiPayloadType: "turn", move: move, opponent: opponent  };
+          handleDisplayUpdate(uiPayload);
+          if (stateInstructions?.event && stateInstructions?.payload) {
+            if( move.result === "Miss" ) {
+              setTimeout(() => {
+                stateMachineInstance.transition("transitionActivePlayer", { activePlayer: activePlayer, opponent: opponent }, true);
+                stateMachineInstance.transition(stateInstructions.event, stateInstructions.payload);
+              }, 1000);
+            } else {
+              stateMachineInstance.transition(stateInstructions.event, stateInstructions.payload);
+            }
+          }
+        });
+      } else {
+        setTimeout(() => {
           let stateInstructions = determineNextState(activePlayer, opponent, stateMachineInstance, move) || (activePlayer, opponent, stateMachineInstance, { event: null, payload: null });
           let uiPayload = { uiPayloadType: "turn", move: move, opponent: opponent  };
           handleDisplayUpdate(uiPayload);
@@ -90,21 +98,9 @@ const stateConfigurations = {
             }
             stateMachineInstance.transition(stateInstructions.event, stateInstructions.payload);
           }
-        });
-      } else {
-        let stateInstructions = determineNextState(activePlayer, opponent, stateMachineInstance, move) || (activePlayer, opponent, stateMachineInstance, { event: null, payload: null });
-        let uiPayload = { uiPayloadType: "turn", move: move, opponent: opponent  };
-        handleDisplayUpdate(uiPayload);
-        if (stateInstructions?.event && stateInstructions?.payload) {
-          if( move.result === "Miss" ) {
-            stateMachineInstance.transition("transitionActivePlayer", { activePlayer: activePlayer, opponent: opponent }, true);
-          }
-          stateMachineInstance.transition(stateInstructions.event, stateInstructions.payload);
-        }
+        }, 1000);
       }
-      if(activePlayer?.isCPU === true) {
-        delayQueue(stateMachineInstance);
-      }
+
     },
     transitions: { transitionActivePlayer: "transitionActivePlayer", startTurn: "startTurn", gameOver: "gameOver" },
   },

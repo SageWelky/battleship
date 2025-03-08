@@ -1,7 +1,7 @@
 import Gameboard from "./gameboard";
 import { createShipImage, placeShipImageOnBoard } from "../dom/boardUI";
 import { battleshipGameBox } from "../definitions/boardgamePieces";
-import { getShipCoordinates } from "../helpers/shipHelpers.js";
+import { ensureShipHasObjectFormatting, getShipCoordinates } from "../helpers/shipHelpers.js";
 import { delayTime } from "../helpers/delay.js";
 
 class Player {
@@ -85,7 +85,6 @@ class CPUPlayer extends Player {
       this.allSunk = true;
     }
     delayTime(2000);
-    console.log("CPU Move: " + move);
     return move;
   }
 
@@ -263,11 +262,14 @@ class HumanPlayer extends Player {
 
       function dragDrop(e, logicPlayerBoard) {
         if (logicPlayerBoard.canPlaceShip(currentDraggablePiece, false)) {
-          logicPlayerBoard.placeShip(currentDraggablePiece);
           placeShipImageOnBoard(currentDraggablePiece, `board-${playerId}`);
           placedShips++;
           currentDraggablePiece.dataset.placed = 'true';
           currentDraggablePiece.classList.remove('draggable');
+          let logicShip = ensureShipHasObjectFormatting(currentDraggablePiece);
+          console.log("!!!!currentDraggablePiece!!!!");
+          console.log(logicShip);
+          logicPlayerBoard.placeShip(logicShip);
         } else {
           currentDraggablePiece.dataset.placed = 'false';
           return;

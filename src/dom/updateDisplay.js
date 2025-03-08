@@ -3,9 +3,6 @@ import { placeShipImageOnBoard } from "./boardUI";
 function updateTileAppearance(move, opponent) {
     let tileBoardId = opponent.id;
     let tile = document.getElementById(`board-${tileBoardId}-tile-${move.key}`);
-    console.log(`Tile Target: board-${tileBoardId}-tile-${move.key}`);
-    console.log(`Tile Result: ${tile}`);
-    console.log("pog 3");
 
     if (move.result === "Hit!"
         || move.result === "Ship sunk!!"
@@ -40,9 +37,7 @@ function updatePlayerHealth(opponent) {
 }
 
 export function handleDisplayUpdate(payload) {
-  console.log("pog 1");
   if (payload.uiPayloadType === "turn") {
-    console.log("pog 2");
     updateTileAppearance(payload.move, payload.opponent);
     updateHeaderInfo(payload.move);
     updatePlayerHealth(payload.opponent);

@@ -36,9 +36,10 @@ export default class Gameboard {
           }
           move.result = "Ship sunk!!";
           move.sunkShipId = sunkShip[1];
+        } else {
+          move.result = "Hit!";
         }
 
-        move.result = "Hit!";
         return move;
       }
 
@@ -62,9 +63,7 @@ export default class Gameboard {
 
     if (this.ships[id - 1].isSunk()) {
       this.numShipsSunk++;
-
       return [true, id];
-
     }
 
     return [false, id];

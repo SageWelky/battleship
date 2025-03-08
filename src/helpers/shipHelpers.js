@@ -37,8 +37,6 @@ export function ensureShipHasObjectFormatting(ship) {
   } else {
     shipObject = ship;
   }
-  // console.log(ship);
-  // console.log('ensureShip Coordinates: ', shipObject.coordinates);
 
   return shipObject;
 }

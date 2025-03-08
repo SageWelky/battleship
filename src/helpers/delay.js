@@ -1,8 +1,8 @@
-export function delayQueue(stateMachineInstance) {
+export function delayQueue(stateMachineInstance, ms) {
   stateMachineInstance.pause();
   setTimeout(() => {
     stateMachineInstance.resume();
-  }, 650);
+  }, ms);
 }
 
 export function delayTime(ms) {
