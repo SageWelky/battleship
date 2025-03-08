@@ -23,8 +23,9 @@ async function startUpTheApplication() {
   await loadPlayScreen({playerOneType: activePlayer.isCPU, playerTwoType: opponent.isCPU});
 
   setTimeout(() => {
-    battleshipStateMachine.states[battleshipStateMachine.currentState]
-    .action({ activePlayer: activePlayer, opponent: opponent, stateMachineInstance: battleshipStateMachine});
+    battleshipStateMachine.transition("setupPhase", { activePlayer: activePlayer, opponent: opponent, });
+    // battleshipStateMachine.states[battleshipStateMachine.currentState]
+    // .action({ activePlayer: activePlayer, opponent: opponent, stateMachineInstance: battleshipStateMachine});
   }, 600);
 
   startButton.removeEventListener("click", startUpTheApplication);

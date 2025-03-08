@@ -5,12 +5,14 @@ import { placeShipImageOnBoard } from "./boardUI";
 export async function loadPlayScreen(inputObject = {playerOneType: false, playerTwoType: true}) {
   const splashTitle = document.getElementById('title-splash');
   const playScreenTitle = document.getElementById('play-screen-title');
+  const allBoardsContainer = document.getElementById('player-boards');
   const ptmPlayerOneContainer = document.getElementById('ptm-player-one-container');
   const ptmPlayerTwoContainer = document.getElementById('ptm-player-two-container');
   const boardOne = document.getElementById('board-1');
   const boardTwo = document.getElementById('board-2');
   let playerId = 1;
 
+  allBoardsContainer.style.viewTransitionName = 'boards';
   splashTitle.style.viewTransitionName = 'title';
   playScreenTitle.style.viewTransitionName = 'title';
   ptmPlayerOneContainer.style.viewTransitionName = 'left';
@@ -46,7 +48,7 @@ export async function loadPlayScreen(inputObject = {playerOneType: false, player
 
     ptmPlayerTwoContainer.style.viewTransitionName = '';
     // boardTwo.style.viewTransitionName = '';
-  }, 500);
+  }, 100);
 
   generateBoardTilesCached({startingOwnerId: 'board-1'});
   generateBoardTilesCached({startingOwnerId: 'board-2'});

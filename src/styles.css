@@ -397,7 +397,7 @@
     padding: clamp(1rem, 2cqi, 3rem);
     background-color: var(--primary-color);
     color: var(--primary-text-color);
-    border-color: var(--accent-color);
+    border: 1px solid var(--accent-color);
     container-type: inline-size;
   }
 
@@ -446,10 +446,20 @@
   }
 
   .grid-tile {
+    box-sizing: border-box;
+    position: relative;
+  }
+
+  .grid-tile::before {
+    content: "";
+    height: 100%;
+    width: 100%;
+    display: block;
     border: 1px solid pink;
     box-sizing: border-box;
     transform: scale(0.9);
     position: relative;
+    /* pointer-events: none; */
   }
 
   .ship {
@@ -505,7 +515,7 @@
 
 
   ::view-transition-group(title) {
-    animation-duration: 0.6s;
+    animation-duration: 0.4s;
     animation-timing-function: ease-in-out;
   }
 
@@ -531,7 +541,7 @@
   ::view-transition-new(right),
   ::view-transition-old(title),
   ::view-transition-new(title) {
-    animation-duration: 0.7s;
+    animation-duration: 0.4s;
   }
 
   #start-screen>.grid-tile,
@@ -637,6 +647,15 @@
     }
   }
 
+  #player-display {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    line-height: 1.5;
+    text-align: center;
+  }
+
   #player-1-health-container {
     @container playspace (max-width: 80dvh) {
       height: 80%;
@@ -730,10 +749,6 @@
     background-color: blueviolet;
   }
 
-  .draggable.in-play {
-    pointer-events: none;
-  }
-
   .hide-draggable-ghost {
     transform:translateX(-9999px);
   }
@@ -746,6 +761,38 @@
   .can-not-drop {
     background-color: firebrick;
     transform: scale(1.0);
+  }
+
+  .ship.fog-of-war {
+    display: none;
+  }
+
+  .board.active.ready>.grid-tile:hover::before {
+    background-color: rgba(128, 255, 0, 0.5);
+  }
+
+  .grid-tile.hit {
+    background-color: var(--accent-color);
+  }
+
+  .grid-tile.miss {
+    background-color: black;
+  }
+
+  .grid-tile.sunk {
+    background-color: var(--selected-accent-color);
+  }
+
+  @keyframes invalid {
+    0% {
+      background-color: red;
+    }
+    50% {
+      background-color: red;
+    }
+    100% {
+      background-color: transparent;
+    }
   }
 }
 

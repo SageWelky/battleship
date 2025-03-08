@@ -56,14 +56,15 @@ export async function generateBoardTiles({startingOwnerId,
 export const generateBoardTilesCached = makeCached(generateBoardTiles);
 
 
-export function createShipImage(length, shipId, appendTarget) {
+export function createShipImage(length, shipId, appendTarget, playerId) {
   let ship = document.createElement('div');
   ship.classList.add('ship');
+  ship.classList.add(`player-${playerId}-ship`);
 
   ship.style.setProperty('--ship-length', length);
   ship.dataset.length = length;
 
-  ship.style.setProperty('id', shipId);
+  ship.style.setProperty('id', `player-${playerId}-ship-${shipId}`);
   ship.dataset.shipId = shipId;
 
   document.getElementById(appendTarget).appendChild(ship);

@@ -7,6 +7,7 @@ import { delayTime } from "../helpers/delay.js";
 class Player {
   constructor(id) {
     this.id = id;
+    this.isSetupComplete = false;
     this.isCPU = false;
     this.allSunk = false;
     this.gameboard = new Gameboard();
@@ -32,10 +33,12 @@ class CPUPlayer extends Player {
   constructor(id) {
     super(id);
     this.isCPU = true;
+    this.isSetupComplete = false;
   }
 
   setupBoard(stateMachineInstance, numberOfSquaresPerSide = 10) {
-    let shipLengths = battleshipGameBox.ships.shipLengths;
+    const shipLengths = battleshipGameBox.ships.shipLengths;
+    const uiPlayerBoard = document.getElementById(`board-${this.id}`);
 
     const setupShip = (shipLength) => {
       let currentShip = {};
@@ -63,6 +66,9 @@ class CPUPlayer extends Player {
     };
 
     shipLengths.forEach(setupShip);
+    uiPlayerBoard.classList.add('ready');
+    this.isSetupComplete = true;
+    return 5;
   }
 
   makeMove(opponent) {
@@ -75,9 +81,11 @@ class CPUPlayer extends Player {
     } while (opponent.gameboard.hashedGuesses.has(`${x},${y}`));
 
     move = opponent.gameboard.receiveAttack({x: x, y: y});
-    if (move.result === "All ships sunk") {
+    if (move.result === "All ships sunk!!!") {
       this.allSunk = true;
     }
+    delayTime(2000);
+    console.log("CPU Move: " + move);
     return move;
   }
 
@@ -85,72 +93,81 @@ class CPUPlayer extends Player {
 
 
 class HumanPlayer extends Player {
+
   constructor(id) {
     super(id);
     this.isCPU = false;
+    this.isSetupComplete = false;
   }
 
   setupBoard(stateMachineInstance, numberOfSquaresPerSide = 10) {
+    const currentPlayer = this;
 
     return new Promise((resolve) => {
       const opponentId = this.id === 1 ? 2 : 1;
-      const playerId = this.id; //Num used to specify player, board, etc. across both logic & DOM elements.
-      const logicPlayerBoard = this.gameboard; //Ref to this player's board instance in logic.
-      const uiPlayerBoard = document.getElementById(`board-${playerId}`); //Ref to this player's board instance in ui.
-      const shipLengths = battleshipGameBox.ships.shipLengths; //Ship lengths in tile units.
-      const shipDomIds = battleshipGameBox.ships.shipDomIds; //Array of DOM ID strings to use for ships.
+      const playerId = this.id;
+      const logicPlayerBoard = this.gameboard;
+      const uiPlayerBoard = document.getElementById(`board-${playerId}`);
+      const shipLengths = battleshipGameBox.ships.shipLengths;
+      const shipDomIds = battleshipGameBox.ships.shipDomIds;
 
+      const allBoardsContainer = document.getElementById('player-boards');
       const side = document.getElementById(`player-${playerId}-pc-side`);
       const lower = document.getElementById(`player-${playerId}-pc-lower`);
       const opponentContainer = document.getElementById(`player-${opponentId}-container`);
       const playerContainer = document.getElementById(`player-${playerId}-container`);
-      const allBoardsContainer = document.getElementById('player-boards');
       side.style.viewTransitionName = 'side';
       lower.style.viewTransitionName = 'lower';
       allBoardsContainer.style.viewTransitionName = 'boards';
-      console.log(side);
 
       let offsetFromMouse;
-      let placedShips = 0; //Index we're at, and number of ships done with setup.
-      let currentDraggablePiece; //Reference currently being drag-clicked element.
+      let placedShips = 0;
+      let currentDraggablePiece;
 
 
-      async function transitionSetup() {
+      async function transitionInSetup() {
 
         if (!document.startViewTransition) {
           opponentContainer.classList.add('setup-opponent');
           side.style.width = '45cqh';
           allBoardsContainer.classList.add('setup');
           playerContainer.classList.add('setup');
-          playerContainer.style.removeProperty('grid-area');
-          primeDraggablesAndContainers();
+          primeDraggablesAndContainers(playerId);
         } else {
 
           let transition = document.startViewTransition(() => {
             opponentContainer.classList.add('setup-opponent');
             allBoardsContainer.classList.add('setup');
             playerContainer.classList.add('setup');
-          });
-          await transition.finished;
-
-          // transition = document.startViewTransition(() => {
-
-          // });
-          await transition.finished;
-          transition = document.startViewTransition(() => {
             side.style.width = '45cqh';
-            primeDraggablesAndContainers();
           });
-          await transition.finished
+          await transition.finished;
+          primeDraggablesAndContainers(playerId);
         }
-        // side.style.viewTransitionName = '';
-        // opponentContainer.style.viewTransitionName = '';
-        // playerContainer.style.viewTransitionName = '';
-        // allBoardsContainer.style.viewTransitionName = '';
-        // lower.style.viewTransitionName = '';
       }
 
-      transitionSetup();
+      async function transitionOutSetup() {
+
+        if (!document.startViewTransition) {
+          opponentContainer.classList.remove('setup-opponent');
+          side.style.width = '17cqh';
+          allBoardsContainer.classList.remove('setup');
+          playerContainer.classList.remove('setup');
+        } else {
+
+          let transition = document.startViewTransition(() => {
+            opponentContainer.classList.remove('setup-opponent');
+            allBoardsContainer.classList.remove('setup');
+            playerContainer.classList.remove('setup');
+            side.style.width = '17cqh';
+          });
+          await transition.finished;
+        }
+        side.style.viewTransitionName = `side${playerId}`;
+        lower.style.viewTransitionName = `lower${playerId}`;
+      }
+
+      transitionInSetup();
       document.addEventListener("keyup", rotate);
 
       function rotate(event) {
@@ -162,7 +179,7 @@ class HumanPlayer extends Player {
         }
       }
 
-      function primeDraggablesAndContainers() {
+      function primeDraggablesAndContainers(playerId) {
         uiPlayerBoard.querySelectorAll('.grid-tile').forEach((tile) => {
           tile.addEventListener('dragover', (e) => dragOver(e));
           tile.addEventListener('drop', (e) => dragDrop(e, logicPlayerBoard));
@@ -170,7 +187,7 @@ class HumanPlayer extends Player {
         });
 
         for (let i = 0; i < shipDomIds.length; i++) {
-          let ship = createShipImage(shipLengths[i], shipDomIds[i], `player-${playerId}-pc-side`);
+          let ship = createShipImage(shipLengths[i], shipDomIds[i], `player-${playerId}-pc-side`, playerId);
           ship.ondragstart = onDragStart;
           ship.ondragend = onDragEnd;
           ship.draggable = true;
@@ -203,11 +220,6 @@ class HumanPlayer extends Player {
           size = e.target.offsetWidth;
           e.target.dataset.offsetFromMouse = Math.floor((mousePosition - targetEdge) / (size / numberOfIncrements));
         }
-        // console.log(`MP: ${mousePosition}`);
-        // console.log(`TE: ${targetEdge}`);
-        // console.log(`Size: ${size}`);
-        // console.log(`Increments: ${numberOfIncrements}`);
-        // console.log(`Offset From Mouse: ${e.target.dataset.offsetFromMouse }`);
 
         e.dataTransfer.setData('text', dragShipId);
       }
@@ -270,7 +282,10 @@ class HumanPlayer extends Player {
 
           document.removeEventListener("keyup", rotate);
 
-          resolve(placedShips);
+          uiPlayerBoard.classList.add('ready');
+          currentPlayer.isSetupComplete = true;
+          transitionOutSetup();
+          setTimeout(() => resolve(placedShips), 500);
         }
       }
 
@@ -284,8 +299,49 @@ class HumanPlayer extends Player {
     });
   }
 
-  makeMove() {
-    console.log("not setup: makeMove()");
+  async makeMove(opponent, stateMachineInstance) {
+    let currentPlayer = this;
+
+    return await new Promise((resolve) => {
+      let move = {};
+
+      async function handleGuess(e) {
+        let clickedTile = e.target;
+        console.log(clickedTile);
+        if (clickedTile.classList.contains('grid-tile')) {
+          let x = clickedTile.id.slice(-3, -2);
+          let y = clickedTile.id.slice(-1);
+
+          if (opponent.gameboard.hashedGuesses.has(`${x},${y}`)) {
+            clickedTile.style.animation = 'invalid 0.2s 3';
+            clickedTile.addEventListener('animationend', function() {
+              clickedTile.style.animation = '';
+            });
+          } else {
+            move = opponent.gameboard.receiveAttack({x: x, y: y});
+            if (move.result === "All ships sunk!!!") {
+              currentPlayer.allSunk = true;
+            }
+
+            uiOpponentBoard.removeEventListener('click', handleGuess);
+            setTimeout(() => resolve(move), 500);
+          }
+        }
+      }
+
+      const playerId = this.id;
+      const opponentId = this.id === 1 ? 2 : 1;
+      const uiPlayerBoard = document.getElementById(`board-${playerId}`);
+      const uiOpponentBoard = document.getElementById(`board-${opponentId}`);
+
+      uiPlayerBoard.querySelectorAll(`.player-${playerId}-ship`).forEach((ship) => {
+        if (ship.classList.contains('fog-of-war')) {
+          ship.classList.remove('fog-of-war');
+        }
+      });
+
+      uiOpponentBoard.addEventListener('click', handleGuess);
+    });
   }
 }
 

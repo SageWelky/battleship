@@ -5,17 +5,19 @@ export default function determineNextState(activePlayer, opponent, stateMachineI
   console.log(`Player ${activePlayer.id} has ${move.result}.`);
 
   switch (move.result) {
-    case "Awaiting Human Player Input...":
-      stateMachineInstance.pause();
+    case "Miss":
+      stateInstructions.event = "startTurn";
+      stateInstructions.payload = { activePlayer: opponent, opponent: activePlayer };
       break;
 
     case "Hit!":
       stateInstructions.event = "startTurn";
       stateInstructions.payload = { activePlayer: activePlayer, opponent: opponent };
       break;
-    case "Miss":
+
+    case "Ship sunk!!":
       stateInstructions.event = "startTurn";
-      stateInstructions.payload = { activePlayer: opponent, opponent: activePlayer };
+      stateInstructions.payload = { activePlayer: activePlayer, opponent: opponent };
       break;
 
     case "All ships sunk!!!":
@@ -31,7 +33,7 @@ export default function determineNextState(activePlayer, opponent, stateMachineI
 
     default:
       console.warn('Invalid state instructions: ', move.result);
-      prompt("A game-breaking error has occured, please refresh the Page.");
+      alert("A game-breaking error has occured, please refresh the Page.");
       break;
   }
 

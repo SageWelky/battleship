@@ -1,3 +1,5 @@
+import { logCallStackSize } from "../helpers/debug";
+
 /**
    * Found in stateMachine.js, this is where our "state traversals" are mapped out.
    * @param {Class} StateMachine - The states object defining transitions and logic.
@@ -8,7 +10,7 @@ export default class StateMachine {
     * @param {Object} states - Our states to traverse.
     */
   constructor(states) {
-    this.currentState = "setupPhase";
+    this.currentState = "idle";
     this.states = states;
     //The queue allows for a clean call-stack.
     this.taskQueue = [];
@@ -25,10 +27,10 @@ export default class StateMachine {
    * @param {Object} [payload={}] - Additional data to pass during the transition.
    * @returns {void}
    */
-  transition(event, payload) {
+  transition(event, payload, intermediateState = false) {
     this.enqueue(() => {
       const nextState = this.states[this.currentState].transitions[event];
-      this.currentState = nextState;
+      this.currentState = intermediateState ? this.currentState : nextState;
 
       if (this.states[nextState]?.action) {
 
@@ -38,11 +40,11 @@ export default class StateMachine {
   }
 
   enqueue(action) {
-   this.taskQueue.push(action);
+    this.taskQueue.push(action);
 
-   if (!this.running) {
-    this.runQueue();
-   }
+    if (!this.running) {
+      this.runQueue();
+    }
   }
 
   runQueue() {
@@ -54,6 +56,7 @@ export default class StateMachine {
 
     while(!this.paused && this.taskQueue.length > 0) {
       let action = this.taskQueue.shift();
+      // logCallStackSize();
       action();
     }
 

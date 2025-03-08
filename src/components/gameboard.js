@@ -25,6 +25,7 @@ export default class Gameboard {
         let sunkShip = false;
 
         sunkShip = this.handleHit(key);
+        move.shipId = sunkShip[1];
 
         if (sunkShip[0]) {
           if (this.numShipsSunk > 4) {
