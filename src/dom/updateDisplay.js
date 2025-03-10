@@ -14,10 +14,9 @@ function updateTileAppearance(move, opponent) {
     }
 
     if (move?.sunkShipId) {
-        // placeShipImageOnBoard(opponent.ships[move.sunkShipId - 1], `board-${tileBoardId}`);
         const sunkShipTiles = document.querySelectorAll(`.player-${opponent.id}-ship-${move.sunkShipId}`);
-        //NEED TO COME BACK TO THIS!!
-        //SET THIS TO A DATASET INSTEAD!! SAME WITH HIT AND MISS, DONT FORGET
+        //Come back to this when returning to the project:
+        //SET THIS TO A DATASET INSTEAD!! SAME WITH HIT AND MISS, DONT FORGET!
         sunkShipTiles.forEach(tile => tile.classList.add('sunk'));
     }
 }

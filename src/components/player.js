@@ -102,6 +102,23 @@ class HumanPlayer extends Player {
   setupBoard(stateMachineInstance, numberOfSquaresPerSide = 10) {
     const currentPlayer = this;
 
+    let footerInfoContainer = document.getElementById('footer-info-container');
+    footerInfoContainer.innerHTML = '';
+
+    let ul = document.createElement('ul');
+    let li1 = document.createElement('li');
+    let li2 = document.createElement('li');
+    ul.setAttribute('id', 'setup-instructions-list');
+    ul.classList.add('info-ul');
+    li1.setAttribute('id', 'placement-instructions');
+    li2.setAttribute('id', 'rotate-instructions');
+    li1.textContent = 'Drag and Drop Ships to Place Them.';
+    li2.textContent = 'Press "R" on the Keyboard to Rotate Your Pieces.';
+
+    ul.appendChild(li1);
+    ul.appendChild(li2);
+    footerInfoContainer.appendChild(ul);
+
     return new Promise((resolve) => {
       const opponentId = this.id === 1 ? 2 : 1;
       const playerId = this.id;
@@ -286,6 +303,7 @@ class HumanPlayer extends Player {
 
           uiPlayerBoard.classList.add('ready');
           currentPlayer.isSetupComplete = true;
+          footerInfoContainer.innerHTML = '';
           transitionOutSetup();
           setTimeout(() => resolve(placedShips), 500);
         }
@@ -303,6 +321,60 @@ class HumanPlayer extends Player {
 
   async makeMove(opponent, stateMachineInstance) {
     let currentPlayer = this;
+
+    let footerInfoContainer = document.getElementById('footer-info-container');
+    footerInfoContainer.innerHTML = '';
+
+    let splitter = document.createElement('div');
+
+    let ulInstructions = document.createElement('ul');
+    let divKey = document.createElement('div');
+
+    let li1 = document.createElement('li');
+    let li2 = document.createElement('li');
+
+    let div3 = document.createElement('div');
+    let divider3to4 = document.createElement('div');
+    let div4 = document.createElement('div');
+    let divider4to5 = document.createElement('div');
+    let div5 = document.createElement('div');
+
+    ulInstructions.setAttribute('id', 'turn-instructions-list');
+    ulInstructions.classList.add('info-ul');
+    li1.setAttribute('id', 'make-guess-instructions');
+    li2.setAttribute('id', 'end-turn-on-miss-instructions');
+    li1.textContent = 'Click on the Enemy Board to Fire a Shot.';
+    li2.textContent = 'Hits Let You Fire an Additional Shot That Turn';
+
+    divKey.setAttribute('id', 'turn-guess-key');
+    divKey.classList.add('info-key');
+    div3.setAttribute('id', 'miss-color');
+    div4.setAttribute('id', 'hit-color');
+    div5.setAttribute('id', 'sunk-color');
+    div3.textContent = 'Missed Color';
+    div3.style.color = 'black';
+    divider3to4.classList.add('info-divider-line');
+    div4.textContent = 'Hit Color';
+    div4.style.color = 'var(--accent-color)';
+    divider4to5.classList.add('info-divider-line');
+    div5.textContent = 'Sunk Color';
+    div5.style.color = 'var(--selected-accent-color)';
+
+    splitter.setAttribute('id', 'footer-info-splitter');
+
+    ulInstructions.appendChild(li1);
+    ulInstructions.appendChild(li2);
+
+    divKey.appendChild(div3);
+    divKey.appendChild(divider3to4);
+    divKey.appendChild(div4);
+    divKey.appendChild(divider4to5);
+    divKey.appendChild(div5);
+
+    splitter.appendChild(ulInstructions);
+    splitter.appendChild(divKey);
+
+    footerInfoContainer.appendChild(splitter);
 
     return await new Promise((resolve) => {
       let move = {};
