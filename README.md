@@ -1,6 +1,6 @@
 # Project: Todo App
 
-[Live Preview](sagewelky.github.io/battleship/)
+[Live Preview]([sagewelky.github.io/battleship/](https://sagewelky.github.io/battleship/))
 
 ## Description:
 
